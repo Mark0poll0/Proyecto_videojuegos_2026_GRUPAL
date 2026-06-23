@@ -1,0 +1,22 @@
+# --- UNITY ---
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+/[Aa]ssets/AssetStoreTools*
+
+# --- ARCHIVOS GENERADOS POR VISUAL STUDIO CODE ---
+.vscode/
+.vs/
+*.csproj
+*.sln
+*.unitypackage
+*.userprefs
+
+# --- SISTEMA ---
+.DS_Store
+Thumbs.db
+
