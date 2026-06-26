@@ -31,4 +31,14 @@ public class Player_Controller : MonoBehaviour
         // Movemos con Física en FixedUpdate (ritmo fijo del motor de física)
         rb.linearVelocity = moveInput * moveSpeed;
     }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        // Si el trigger de la escalera te cambió la capa física a Layer 2, 
+        // despertamos el Rigidbody para consolidar el paso al segundo piso
+        if (gameObject.layer == LayerMask.NameToLayer("Layer 2") || gameObject.layer == LayerMask.NameToLayer("Layer 1"))
+        {
+            rb.WakeUp();
+        }
+    }
 }
