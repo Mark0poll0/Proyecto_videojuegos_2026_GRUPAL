@@ -1,4 +1,6 @@
-# --- UNITY ---
+# =========================================================================
+#                          UNITY GENERATED FILES
+# =========================================================================
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -8,15 +10,49 @@
 [Mm]emoryCaptures/
 /[Aa]ssets/AssetStoreTools*
 
-# --- ARCHIVOS GENERADOS POR VISUAL STUDIO CODE ---
-.vscode/
+# --- Unity 6 User and Layout Configurations ---
+[Uu]ser[Ss]ettings/
+*.pid
+*.gcl
+*.lh
+
+# =========================================================================
+#                     IDE & BUILD TOOL GENERATED FILES
+# =========================================================================
+# --- Visual Studio & Visual Studio Code ---
 .vs/
+.vscode/
 *.csproj
 *.sln
-*.unitypackage
+*.suo
+*.user
 *.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+*.VC.db
 
-# --- SISTEMA ---
+# --- Rider ---
+.idea/
+*.sln.iml
+
+# --- Packages & Packages Cache ---
+sysdata.md
+/[Pp]ackages/manifest.json
+/[Pp]ackages/packages-lock.json
+
+# --- Unity Asset Packages ---
+*.unitypackage
+
+# =========================================================================
+#                          SYSTEM O.S. FILES
+# =========================================================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-
