@@ -8,11 +8,13 @@ public class Player_Controller : MonoBehaviour
 
     private PlayerController controls; // <- Clase generada por el Input System
     private Rigidbody2D rb;
+    private Animator animator;
     private Vector2 moveInput;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         controls = new PlayerController(); // Creamos el objeto del input
     }
 
@@ -24,6 +26,17 @@ public class Player_Controller : MonoBehaviour
     {
         // Leemos el Input en cada Frame (En Update, que va al ritmo de los fotogramas)
         moveInput = controls.Gameplay.Move.ReadValue<Vector2>();
+
+        // Alimentamos el animator
+        // Speed = 0 cuando está quieto idle, >0 cuando se mueve
+        animator.SetFloat("Speed", moveInput.sqrMagnitude);
+
+        // guardamos la última dirección
+        if (moveInput.sqrMagnitude > 0.01f) 
+        {
+            animator.SetFloat("MoveX", moveInput.x);
+            animator.SetFloat("MoveY", moveInput.y);
+        }
     }
 
     private void FixedUpdate()
