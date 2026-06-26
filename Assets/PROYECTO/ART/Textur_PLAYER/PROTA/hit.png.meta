@@ -122,12 +122,12 @@ TextureImporter:
       name: hit_0
       rect:
         serializedVersion: 2
-        x: 17
-        y: 10
-        width: 31
-        height: 25
+        x: 0
+        y: 0
+        width: 64
+        height: 49
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -144,12 +144,12 @@ TextureImporter:
       name: hit_1
       rect:
         serializedVersion: 2
-        x: 80
-        y: 10
-        width: 24
-        height: 25
+        x: 64
+        y: 0
+        width: 64
+        height: 49
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -162,33 +162,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: hit_2
-      rect:
-        serializedVersion: 2
-        x: 101
-        y: 12
-        width: 12
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 8033b24e9bdf9f570800000000000000
-      internalID: 8501104746477335304
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 1518e7f992ac8084ba694d1a8c9b10b4
     internalID: 0
     vertices: []
     indices: 
@@ -196,11 +174,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":2.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":49.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       hit_0: -59066101396820148
       hit_1: -9037724387597929990
-      hit_2: 8501104746477335304
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
