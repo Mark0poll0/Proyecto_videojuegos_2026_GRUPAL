@@ -18,6 +18,28 @@ public class Player_Controller : MonoBehaviour
     [Tooltip("Segundos que espera tras un golpe para encadenar el siguiente antes de resetear el combo.")]
     [SerializeField] private float comboWindow = 0.35f;
 
+    [Header("Sonidos (SFX)")]
+    [Tooltip("Fuente de audio local del personaje para efectos de sonido.")]
+    [SerializeField] private AudioSource sfxSource;
+
+    [Tooltip("Gemidos o sonidos de esfuerzo al dar el primer golpe (se elegirá uno al azar).")]
+    [SerializeField] private AudioClip[] attack1Sounds;
+
+    [Tooltip("Gemidos o sonidos de esfuerzo al dar el segundo golpe (se elegirá uno al azar).")]
+    [SerializeField] private AudioClip[] attack2Sounds;
+
+    [Tooltip("Gemidos o sonidos de esfuerzo al dar el tercer golpe (se elegirá uno al azar).")]
+    [SerializeField] private AudioClip[] attack3Sounds;
+
+    [Tooltip("Sonidos de espadazo (se elegirá uno al azar en cada golpe del combo).")]
+    [SerializeField] private AudioClip[] swordSounds;
+
+    [Tooltip("Gemidos o sonidos al recibir daño (se elegirá uno al azar).")]
+    [SerializeField] private AudioClip[] hitSounds;
+
+    [Tooltip("Gemidos o sonidos cuando el personaje muere (se elegirá uno al azar).")]
+    [SerializeField] private AudioClip[] deathSounds;
+
     private PlayerController controls; // <- Clase generada por el Input System
     private Rigidbody2D rb;
     private Animator animator;
@@ -31,17 +53,23 @@ public class Player_Controller : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        // Inicializamos los controles del Input System
+        controls = new PlayerController();
+
+        // Buscamos un AudioSource local si no fue asignado en el Inspector
+        if (sfxSource == null)
+            sfxSource = GetComponent<AudioSource>();
     }
 
     // Activar/desactivar el mapa de acciones cuando el objeto se enciende/apaga
     private void OnEnable()
     {
-        // Inicialización perezosa: OnEnable puede correr antes de Awake o tras un domain reload
-        if (controls == null)
-            controls = new PlayerController(); // Creamos el objeto del input
-
-        controls.Gameplay.Enable();
-        controls.Gameplay.Attack.performed += OnAttack; // suscribimos el ataque (tecla Z)
+        if (controls != null)
+        {
+            controls.Gameplay.Enable();
+            controls.Gameplay.Attack.performed += OnAttack; // suscribimos el ataque (tecla Z)
+        }
     }
 
     private void OnDisable()
@@ -91,6 +119,8 @@ public class Player_Controller : MonoBehaviour
     // Se dispara cuando se presiona la acción Attack (tecla Z)
     private void OnAttack(InputAction.CallbackContext context)
     {
+        if (this == null) return; // Salvaguarda si el objeto de Unity ha sido destruido
+
         if (!isAttacking)
         {
             // Inicio del combo: fijamos la dirección y arrancamos la corrutina
@@ -139,6 +169,17 @@ public class Player_Controller : MonoBehaviour
         {
             float inicio = cuts[step];
             float fin = cuts[step + 1];
+
+            // Reproducimos el sonido de esfuerzo según el paso del combo
+            if (step == 0)
+                PlayRandomSFX(attack1Sounds);
+            else if (step == 1)
+                PlayRandomSFX(attack2Sounds);
+            else if (step == 2)
+                PlayRandomSFX(attack3Sounds);
+
+            // Reproducimos un sonido de espada aleatorio en cada golpe del combo
+            PlayRandomSFX(swordSounds);
 
             // Reproducimos el tramo [inicio, fin] del clip
             animator.speed = 1f;
@@ -205,6 +246,52 @@ public class Player_Controller : MonoBehaviour
                 return clip;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Activa la animación de daño ("Hit") y reproduce un sonido aleatorio de quejido por daño.
+    /// </summary>
+    [ContextMenu("Probar Daño (Hit)")]
+    public void TakeDamage()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger("Hit");
+        }
+        PlayRandomSFX(hitSounds);
+    }
+
+    /// <summary>
+    /// Activa la animación de muerte ("Dead") y reproduce el sonido de fallecimiento.
+    /// </summary>
+    [ContextMenu("Probar Muerte (Die)")]
+    public void Die()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger("Dead");
+        }
+        PlayRandomSFX(deathSounds);
+    }
+
+    private void PlaySFX(AudioClip clip)
+    {
+        if (sfxSource != null && clip != null)
+        {
+            sfxSource.PlayOneShot(clip);
+        }
+    }
+
+    private void PlayRandomSFX(AudioClip[] clips)
+    {
+        if (sfxSource == null || clips == null || clips.Length == 0) return;
+
+        int randomIndex = Random.Range(0, clips.Length);
+        AudioClip clip = clips[randomIndex];
+        if (clip != null)
+        {
+            sfxSource.PlayOneShot(clip);
+        }
     }
 
     private void OnTriggerStay2D(Collider2D other)
