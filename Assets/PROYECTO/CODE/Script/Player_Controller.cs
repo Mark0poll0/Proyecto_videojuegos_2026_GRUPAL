@@ -12,9 +12,8 @@ public class Player_Controller : MonoBehaviour
     [Tooltip("Si está activo, el jugador se queda quieto mientras ataca.")]
     [SerializeField] private bool bloquearMovimientoAlAtacar = true;
 
-    [Tooltip("Cortes del combo en normalizedTime del clip: 3 golpes = 4 valores (0..1). " +
-             "Cada golpe reproduce el tramo [corte i, corte i+1].")]
-    [SerializeField] private float[] comboCuts = { 0f, 0.34f, 0.67f, 1f };
+    [Tooltip("Cantidad de frames que dura cada golpe del combo.")]
+    [SerializeField] private int framesPerHit = 5;
 
     [Tooltip("Segundos que espera tras un golpe para encadenar el siguiente antes de resetear el combo.")]
     [SerializeField] private float comboWindow = 0.35f;
@@ -118,20 +117,47 @@ public class Player_Controller : MonoBehaviour
         // Usamos el clip "en su lugar" (_stay) de la dirección fijada
         string state = "attack_" + comboDir + "_stay";
 
-        int golpes = Mathf.Max(0, comboCuts.Length - 1); // nº de tramos = cortes - 1 (3 golpes con 4 cortes)
+        // Intentamos obtener la información del clip de forma directa por su nombre
+        float totalFrames = 20f; // Valor de respaldo por defecto
+        AnimationClip clip = GetAnimationClip(state);
+        if (clip != null)
+        {
+            totalFrames = clip.length * clip.frameRate;
+        }
+
+        // Calculamos los cortes en tiempo normalizado (0 a 1) para que dure 'framesPerHit' por golpe
+        float normalizedStep = (float)framesPerHit / totalFrames;
+        float[] cuts = new float[] { 
+            0f, 
+            normalizedStep, 
+            normalizedStep * 2f, 
+            1f // El tercer golpe va hasta el final de la animación para completarla
+        };
+
+        int golpes = cuts.Length - 1; // 3 golpes
         for (int step = 0; step < golpes; step++)
         {
-            float inicio = comboCuts[step];
-            float fin = comboCuts[step + 1];
+            float inicio = cuts[step];
+            float fin = cuts[step + 1];
 
             // Reproducimos el tramo [inicio, fin] del clip
             animator.speed = 1f;
             animator.Play(state, 0, inicio);
-            yield return null; // dejamos que el Animator entre al estado
+            yield return null; // Dejamos pasar un frame para iniciar la transición
+
+            // Esperamos un frame y verificamos si ya entró al estado (con un límite de seguridad de 5 frames)
+            int safetyCounter = 0;
+            while (!animator.GetCurrentAnimatorStateInfo(0).IsName(state) && safetyCounter < 5)
+            {
+                safetyCounter++;
+                yield return null;
+            }
 
             // Avanzamos hasta el final del tramo
-            while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < fin)
+            while (animator.GetCurrentAnimatorStateInfo(0).IsName(state) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < fin)
+            {
                 yield return null;
+            }
 
             // Congelamos en el último frame del golpe
             animator.speed = 0f;
@@ -166,6 +192,19 @@ public class Player_Controller : MonoBehaviour
         if (Mathf.Abs(lastFacing.x) >= Mathf.Abs(lastFacing.y))
             return lastFacing.x >= 0f ? "left" : "right";
         return lastFacing.y >= 0f ? "up" : "down";
+    }
+
+    private AnimationClip GetAnimationClip(string name)
+    {
+        if (animator == null || animator.runtimeAnimatorController == null)
+            return null;
+
+        foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
+        {
+            if (clip.name == name)
+                return clip;
+        }
+        return null;
     }
 
     private void OnTriggerStay2D(Collider2D other)
