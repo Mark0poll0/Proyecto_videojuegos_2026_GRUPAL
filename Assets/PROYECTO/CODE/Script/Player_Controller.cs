@@ -259,6 +259,13 @@ public class Player_Controller : MonoBehaviour
             animator.SetTrigger("Hit");
         }
         PlayRandomSFX(hitSounds);
+
+        // Hacemos temblar la cámara al recibir daño
+        Cainos.PixelArtTopDown_Basic.CameraFollow cam = Camera.main?.GetComponent<Cainos.PixelArtTopDown_Basic.CameraFollow>();
+        if (cam != null)
+        {
+            cam.ShakeCamera(0.15f, 0.15f); // 0.15 segundos de duración, 0.15 de fuerza
+        }
     }
 
     /// <summary>

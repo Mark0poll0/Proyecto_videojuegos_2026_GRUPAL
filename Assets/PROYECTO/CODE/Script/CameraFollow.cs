@@ -1,33 +1,61 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 namespace Cainos.PixelArtTopDown_Basic
 {
-    //let camera follow target
+    // Cámara seguidora mejorada con amortiguación física y temblor de pantalla (Camera Shake)
     public class CameraFollow : MonoBehaviour
     {
+        [Header("Objetivo")]
         public Transform target;
-        public float lerpSpeed = 1.0f;
 
-        private Vector3 offset;
+        [Header("Ajustes de Movimiento")]
+        [Tooltip("Velocidad de amortiguación (menor tiempo = seguimiento más elástico y reactivo).")]
+        [SerializeField] private float smoothTime = 0.2f;
 
-        private Vector3 targetPos;
+        [Tooltip("Desplazamiento vertical para ajustar la altura de la cámara respecto al jugador.")]
+        [SerializeField] private float offsetY = 0f;
 
-        private void Start()
+        [Tooltip("Distancia de la cámara en el eje Z (para 2D normalmente es -10).")]
+        [SerializeField] private float offsetZ = -10f;
+
+        // Variables internas para el movimiento suave (SmoothDamp)
+        private Vector3 currentVelocity = Vector3.zero;
+
+        // Variables internas para el efecto de temblor (Shake)
+        private float shakeDuration = 0f;
+        private float shakeMagnitude = 0f;
+
+        private void LateUpdate()
         {
             if (target == null) return;
 
-            offset = transform.position - target.position;
+            // 1. Calculamos la posición destino ideal
+            Vector3 targetPos = new Vector3(target.position.x, target.position.y + offsetY, target.position.z + offsetZ);
+
+            // 2. Movimiento suave amortiguado (SmoothDamp crea una inercia elástica muy natural)
+            Vector3 newPos = Vector3.SmoothDamp(transform.position, targetPos, ref currentVelocity, smoothTime);
+
+            // 3. Si hay un temblor activo, añadimos el offset aleatorio
+            if (shakeDuration > 0)
+            {
+                Vector2 shakeOffset = Random.insideUnitCircle * shakeMagnitude;
+                newPos += new Vector3(shakeOffset.x, shakeOffset.y, 0);
+                shakeDuration -= Time.deltaTime;
+            }
+
+            transform.position = newPos;
         }
 
-        private void Update()
+        /// <summary>
+        /// Hace temblar la pantalla con una duración y fuerza determinadas.
+        /// </summary>
+        /// <param name="duration">Segundos que durará el temblor.</param>
+        /// <param name="magnitude">Intensidad del temblor.</param>
+        public void ShakeCamera(float duration, float magnitude)
         {
-            if (target == null) return;
-
-            targetPos = target.position + offset;
-            transform.position = Vector3.Lerp(transform.position, targetPos, lerpSpeed * Time.deltaTime);
+            shakeDuration = duration;
+            shakeMagnitude = magnitude;
         }
-
     }
 }
