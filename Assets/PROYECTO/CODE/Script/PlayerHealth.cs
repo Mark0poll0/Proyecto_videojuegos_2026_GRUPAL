@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [Header("Ajustes de Vida")]
     [Tooltip("Cada corazón equivale a 4 puntos de vida.")]
