@@ -155,6 +155,12 @@ public class EnemyController : MonoBehaviour
         {
             playerHealth.TakeDamage(attackDamage);
         }
+
+        // El estado "Attack" no tiene transiciones de salida en el grafo: hay que volver
+        // a Idle/Walk a mano, igual que hace el jugador al terminar su combo. Si no,
+        // el enemigo queda congelado en la pose de ataque y los triggers Hit/Dead no
+        // tienen ninguna transición válida desde ahí.
+        if (!isDead) animator.Play("Idle", 0, 0f);
     }
 
     private void HandleHealthChanged(int current, int max)
@@ -170,7 +176,11 @@ public class EnemyController : MonoBehaviour
     {
         isDead = true;
         state = EnemyState.Dead;
-        animator.SetTrigger("Dead");
+
+        // Se fuerza el estado por código (en vez de SetTrigger) porque el golpe final puede
+        // llegar mientras el Animator está en "Hurt" o "Attack", que no tienen ninguna
+        // transición de salida hacia "Death" en el grafo — así siempre se ve la muerte.
+        animator.Play("Death", 0, 0f);
         rb.linearVelocity = Vector2.zero;
 
         Collider2D col = GetComponent<Collider2D>();

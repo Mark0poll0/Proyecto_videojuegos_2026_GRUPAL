@@ -18,6 +18,11 @@ public class Player_Controller : MonoBehaviour
     [Tooltip("Segundos que espera tras un golpe para encadenar el siguiente antes de resetear el combo.")]
     [SerializeField] private float comboWindow = 0.35f;
 
+    [Tooltip("Collider (trigger) del hitbox de daño. Se activa solo durante la ventana de cada golpe.")]
+    [SerializeField] private Collider2D attackHitboxCollider;
+    [Tooltip("Distancia desde el jugador a la que se posiciona el hitbox, según la dirección del golpe.")]
+    [SerializeField] private float attackHitboxOffset = 0.55f;
+
     [Header("Sonidos (SFX)")]
     [Tooltip("Fuente de audio local del personaje para efectos de sonido.")]
     [SerializeField] private AudioSource sfxSource;
@@ -60,6 +65,9 @@ public class Player_Controller : MonoBehaviour
         // Buscamos un AudioSource local si no fue asignado en el Inspector
         if (sfxSource == null)
             sfxSource = GetComponent<AudioSource>();
+
+        if (attackHitboxCollider != null)
+            attackHitboxCollider.enabled = false;
     }
 
     // Activar/desactivar el mapa de acciones cuando el objeto se enciende/apaga
@@ -194,11 +202,18 @@ public class Player_Controller : MonoBehaviour
                 yield return null;
             }
 
+            // Activamos el hitbox de daño durante la ventana de este golpe
+            PositionAttackHitbox(comboDir);
+            if (attackHitboxCollider != null) attackHitboxCollider.enabled = true;
+
             // Avanzamos hasta el final del tramo
             while (animator.GetCurrentAnimatorStateInfo(0).IsName(state) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < fin)
             {
                 yield return null;
             }
+
+            // Desactivamos el hitbox al terminar la ventana de golpe
+            if (attackHitboxCollider != null) attackHitboxCollider.enabled = false;
 
             // Congelamos en el último frame del golpe
             animator.speed = 0f;
@@ -233,6 +248,23 @@ public class Player_Controller : MonoBehaviour
         if (Mathf.Abs(lastFacing.x) >= Mathf.Abs(lastFacing.y))
             return lastFacing.x >= 0f ? "left" : "right";
         return lastFacing.y >= 0f ? "up" : "down";
+    }
+
+    // Posiciona el hitbox de ataque frente al jugador según la dirección del golpe.
+    // "dir" (comboDir) viene con left/right invertidos respecto al mundo real, igual que en
+    // GetAttackDirection (por el espejado de los sprites) — aquí los volvemos a invertir para
+    // colocar el hitbox del lado físico correcto (donde realmente se ve el golpe).
+    private void PositionAttackHitbox(string dir)
+    {
+        if (attackHitboxCollider == null) return;
+
+        Vector2 offset = Vector2.down;
+        if (dir == "up") offset = Vector2.up;
+        else if (dir == "down") offset = Vector2.down;
+        else if (dir == "left") offset = Vector2.right;
+        else if (dir == "right") offset = Vector2.left;
+
+        attackHitboxCollider.transform.localPosition = offset * attackHitboxOffset;
     }
 
     private AnimationClip GetAnimationClip(string name)
