@@ -71,8 +71,18 @@ public class ProceduralMapGenerator : MonoBehaviour
     [Tooltip("Grosor en azulejos de los pasillos rectangulares que conectan las zonas.")]
     [Range(3, 10)] [SerializeField] private int grosorPasillo = 5;
 
-    [Header("Decoración")]
+    [Header("Decoración por Tiles")]
     [Range(0f, 0.1f)] [SerializeField] private float probabilidadFlores = 0.07f;
+
+    [Header("Densidad de Prefabs Decorativos (0 a 1)")]
+    [Range(0f, 0.2f)] [SerializeField] private float densidadPlantas = 0.05f;
+    [Range(0f, 0.2f)] [SerializeField] private float densidadProps = 0.02f;
+
+    [Header("Colecciones de Prefabs (Opcional)")]
+    [Tooltip("Si se deja vacío, se cargarán todos los prefabs de Assets/PROYECTO/PREFABS/Plant")]
+    [SerializeField] private GameObject[] prefabsPlantasManual;
+    [Tooltip("Si se deja vacío, se cargarán todos los prefabs de Assets/PROYECTO/PREFABS/Props (excepto escaleras)")]
+    [SerializeField] private GameObject[] prefabsPropsManual;
 
     /// <summary>
     /// Genera 5 zonas distribuidas en forma de cruz/quincuncio (Centro y 4 esquinas),
@@ -112,9 +122,12 @@ public class ProceduralMapGenerator : MonoBehaviour
         Undo.RegisterCompleteObjectUndo(wallTilemap, "Generar Mapa");
 #endif
 
+        // 1. Limpiar mapas y decoraciones previas
         grassTilemap.ClearAllTiles();
         wallTilemap.ClearAllTiles();
+        ClearDecorations();
 
+        // 2. Cargar recursos de suelo
         TileBase[] grassTiles = LoadTilesFromPrefix("TX Tileset Grass ");
         TileBase[] grassFlowerTiles = LoadTilesFromPrefix("TX Tileset Grass Flower ");
 
@@ -124,6 +137,31 @@ public class ProceduralMapGenerator : MonoBehaviour
             return;
         }
 
+        // 3. Cargar Prefabs de Decoración
+        GameObject[] prefabsPlantas = prefabsPlantasManual;
+        if (prefabsPlantas == null || prefabsPlantas.Length == 0)
+        {
+            prefabsPlantas = LoadPrefabsFromPath("Plant");
+        }
+
+        GameObject[] prefabsProps = prefabsPropsManual;
+        if (prefabsProps == null || prefabsProps.Length == 0)
+        {
+            // Excluimos las escaleras ("Stairs"), estructuras ("Struct") y puertas ("Gate")
+            prefabsProps = LoadPrefabsFromPath("Props", new string[] { "Stairs", "Struct", "Gate" });
+        }
+
+        // 4. Crear contenedor de decoración en la escena
+        GameObject containerObj = new GameObject("DecorationsContainer");
+        containerObj.transform.parent = transform;
+        containerObj.transform.localPosition = Vector3.zero;
+        Transform decorContainer = containerObj.transform;
+
+#if UNITY_EDITOR
+        Undo.RegisterCreatedObjectUndo(containerObj, "Generar Mapa - Decoraciones");
+#endif
+
+        // 5. Matriz lógica de pasto
         bool[,] isGrass = new bool[anchoLienzo, altoLienzo];
 
         Vector2Int zCenter = new Vector2Int(anchoLienzo / 2, altoLienzo / 2);
@@ -150,12 +188,10 @@ public class ProceduralMapGenerator : MonoBehaviour
         if (Random.value < 0.60f) ConnectZones(zTopLeft, zBottomLeft, isGrass);
         if (Random.value < 0.60f) ConnectZones(zTopRight, zBottomRight, isGrass);
 
-        // Limpiamos pasillos muertos de 1 casilla de ancho
+        // Limpieza de caminos o salientes muertos de 1 casilla de ancho
         PruneDeadEnds(isGrass);
 
-        // REGLA FUNDAMENTAL: 
-        // 1. Los muros Norte, Izquierda y Derecha van SOBRE EL GRASS (dibujados en casillas isGrass == true).
-        // 2. Los muros Sur van AL BORDE DEL GRASS (dibujados en casillas vacías, justo debajo de isGrass == true).
+        // 6. Pintar el suelo y los muros
         for (int x = 0; x < anchoLienzo; x++)
         {
             for (int y = 0; y < altoLienzo; y++)
@@ -171,7 +207,7 @@ public class ProceduralMapGenerator : MonoBehaviour
                     TileBase grassTile = grassTiles[Random.Range(0, Mathf.Min(grassTiles.Length, 4))];
                     grassTilemap.SetTile(new Vector3Int(worldX, worldY, 0), grassTile);
 
-                    // 2. Pintar flores decorativas
+                    // 2. Pintar flores decorativas por tiles
                     if (grassFlowerTiles.Length > 0 && Random.value < probabilidadFlores)
                     {
                         TileBase flowerTile = grassFlowerTiles[Random.Range(0, grassFlowerTiles.Length)];
@@ -183,35 +219,59 @@ public class ProceduralMapGenerator : MonoBehaviour
                     bool noGrassLeft = (x == 0) || !isGrass[x - 1, y];
                     bool noGrassRight = (x == anchoLienzo - 1) || !isGrass[x + 1, y];
 
+                    bool tieneMuro = false;
+
                     if (noGrassUp && noGrassLeft)
                     {
+                        tieneMuro = true;
                         if (esqSupIzq != null) wallTilemap.SetTile(new Vector3Int(worldX, worldY, 0), esqSupIzq);
                     }
                     else if (noGrassUp && noGrassRight)
                     {
+                        tieneMuro = true;
                         if (esqSupDer != null) wallTilemap.SetTile(new Vector3Int(worldX, worldY, 0), esqSupDer);
                     }
                     else if (noGrassUp)
                     {
+                        tieneMuro = true;
                         TileBase t = GetSafeTile(rellenoSupDisenos, Random.Range(0, rellenoSupDisenos.Length));
                         if (t != null) wallTilemap.SetTile(new Vector3Int(worldX, worldY, 0), t);
                     }
                     else if (noGrassLeft)
                     {
+                        tieneMuro = true;
                         TileBase t = GetSafeTile(muroIzqDisenos, Random.Range(0, muroIzqDisenos.Length));
                         if (t != null) wallTilemap.SetTile(new Vector3Int(worldX, worldY, 0), t);
                     }
                     else if (noGrassRight)
                     {
+                        tieneMuro = true;
                         TileBase t = GetSafeTile(muroDerDisenos, Random.Range(0, muroDerDisenos.Length));
                         if (t != null) wallTilemap.SetTile(new Vector3Int(worldX, worldY, 0), t);
+                    }
+
+                    // 4. Instanciación aleatoria de Prefabs Decorativos (solo si no se colocó un muro aquí)
+                    if (!tieneMuro)
+                    {
+                        if (prefabsPlantas.Length > 0 && Random.value < densidadPlantas)
+                        {
+                            GameObject plantaElegida = prefabsPlantas[Random.Range(0, prefabsPlantas.Length)];
+                            Vector3 pos = grassTilemap.GetCellCenterWorld(new Vector3Int(worldX, worldY, 0));
+                            SpawnPrefab(plantaElegida, pos, decorContainer);
+                        }
+                        else if (prefabsProps.Length > 0 && Random.value < densidadProps)
+                        {
+                            GameObject propElegido = prefabsProps[Random.Range(0, prefabsProps.Length)];
+                            Vector3 pos = grassTilemap.GetCellCenterWorld(new Vector3Int(worldX, worldY, 0));
+                            SpawnPrefab(propElegido, pos, decorContainer);
+                        }
                     }
                 }
                 else
                 {
                     // === ESTAMOS FUERA DEL ÁREA DE PASTO ===
 
-                    // 4. Evaluar si es el borde justo debajo del pasto (Para el Muro Sur)
+                    // 5. Evaluar si es el borde justo debajo del pasto (Para el Muro Sur)
                     if (y < altoLienzo - 1 && isGrass[x, y + 1])
                     {
                         // Para saber si es esquina, revisamos si el PASTO de arriba continúa hacia los lados
@@ -273,7 +333,7 @@ public class ProceduralMapGenerator : MonoBehaviour
         EditorUtility.SetDirty(wallTilemap.gameObject);
 #endif
 
-        Debug.Log("¡Mapa laberíntico de 5 zonas interconectadas generado con éxito! Deshaz con Ctrl+Z si es necesario.");
+        Debug.Log("¡Mapa laberíntico de 5 zonas interconectadas y decorado generado con éxito! Deshaz con Ctrl+Z si es necesario.");
     }
 
     [ContextMenu("Limpiar Mapa")]
@@ -288,6 +348,7 @@ public class ProceduralMapGenerator : MonoBehaviour
 
         grassTilemap.ClearAllTiles();
         wallTilemap.ClearAllTiles();
+        ClearDecorations();
 
 #if UNITY_EDITOR
         EditorUtility.SetDirty(grassTilemap.gameObject);
@@ -295,6 +356,27 @@ public class ProceduralMapGenerator : MonoBehaviour
 #endif
 
         Debug.Log("¡Mapa limpiado!");
+    }
+
+    private void ClearDecorations()
+    {
+        Transform container = transform.Find("DecorationsContainer");
+        if (container != null)
+        {
+            DestroyImmediate(container.gameObject);
+        }
+    }
+
+    private void SpawnPrefab(GameObject prefab, Vector3 position, Transform parent)
+    {
+        if (prefab == null) return;
+#if UNITY_EDITOR
+        GameObject obj = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+        obj.transform.position = position;
+        Undo.RegisterCreatedObjectUndo(obj, "Generar Mapa - Decoración");
+#else
+        Instantiate(prefab, position, Quaternion.identity, parent);
+#endif
     }
 
     private void PruneDeadEnds(bool[,] isGrass)
@@ -475,5 +557,43 @@ public class ProceduralMapGenerator : MonoBehaviour
 #endif
 
         return tiles.ToArray();
+    }
+
+    private GameObject[] LoadPrefabsFromPath(string relativeFolder, string[] excludeKeywords = null)
+    {
+        System.Collections.Generic.List<GameObject> prefabs = new System.Collections.Generic.List<GameObject>();
+
+#if UNITY_EDITOR
+        string folderPath = "Assets/PROYECTO/PREFABS/" + relativeFolder;
+        if (Directory.Exists(folderPath))
+        {
+            string[] files = Directory.GetFiles(folderPath, "*.prefab", SearchOption.AllDirectories);
+            foreach (string file in files)
+            {
+                string assetPath = file.Replace('\\', '/');
+                
+                if (excludeKeywords != null)
+                {
+                    bool skip = false;
+                    foreach (string keyword in excludeKeywords)
+                    {
+                        if (assetPath.IndexOf(keyword, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            skip = true;
+                            break;
+                        }
+                    }
+                    if (skip) continue;
+                }
+
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+                if (prefab != null)
+                {
+                    prefabs.Add(prefab);
+                }
+            }
+        }
+#endif
+        return prefabs.ToArray();
     }
 }
