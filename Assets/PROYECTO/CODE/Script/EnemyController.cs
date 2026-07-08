@@ -16,9 +16,12 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float loseRange = 6f;
 
     [Header("Ataque")]
-    [Tooltip("Distancia a la que el enemigo deja de perseguir y ataca.")]
-    [SerializeField] private float attackRange = 0.7f;
+    [Tooltip("Distancia a la que el enemigo deja de perseguir y ataca. Debe ser mayor que el radio físico de contacto (collider del enemigo + collider del jugador), o el enemigo se quedará empujando sin atacar nunca.")]
+    [SerializeField] private float attackRange = 1.3f;
     [SerializeField] private float attackCooldown = 1.2f;
+    [SerializeField] private int attackDamage = 1;
+    [Tooltip("Tiempo desde que empieza la animación de ataque hasta que se aplica el daño.")]
+    [SerializeField] private float attackDelay = 0.3f;
 
     [Header("Sonidos (SFX)")]
     [SerializeField] private AudioSource sfxSource;
@@ -29,6 +32,7 @@ public class EnemyController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private EnemyHealth enemyHealth;
     private Transform playerTransform;
+    private PlayerHealth playerHealth;
 
     private EnemyState state = EnemyState.Idle;
     private float lastAttackTime = -999f;
@@ -66,6 +70,7 @@ public class EnemyController : MonoBehaviour
         if (player != null)
         {
             playerTransform = player.transform;
+            playerHealth = player.GetComponent<PlayerHealth>();
         }
         else
         {
@@ -140,8 +145,16 @@ public class EnemyController : MonoBehaviour
     {
         animator.Play("Attack", 0, 0f);
         PlayRandomSound(attackSounds);
-        // El daño real al jugador se conecta en un paso posterior del plan.
-        yield return null;
+
+        yield return new WaitForSeconds(attackDelay);
+
+        if (isDead || playerHealth == null || playerTransform == null) yield break;
+
+        float distance = Vector2.Distance(transform.position, playerTransform.position);
+        if (distance <= attackRange)
+        {
+            playerHealth.TakeDamage(attackDamage);
+        }
     }
 
     private void HandleHealthChanged(int current, int max)
