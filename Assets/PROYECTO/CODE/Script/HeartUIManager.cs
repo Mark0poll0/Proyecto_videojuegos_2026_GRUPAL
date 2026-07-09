@@ -5,7 +5,10 @@ using System.Collections.Generic;
 public class HeartUIManager : MonoBehaviour
 {
     [Header("Referencias")]
+    [Tooltip("Asigna aquí el script Player Health si esto es para el protagonista.")]
     [SerializeField] private PlayerHealth playerHealth;
+    [Tooltip("Asigna aquí el script Enemy Health si esto es para un enemigo.")]
+    [SerializeField] private EnemyHealth enemyHealth;
     [SerializeField] private GameObject heartPrefab; // Un GameObject que contendrá un componente Image
 
     [Header("Sprites de Corazones")]
@@ -19,11 +22,38 @@ public class HeartUIManager : MonoBehaviour
 
     private List<Image> spawnedHearts = new List<Image>();
 
+    private void Awake()
+    {
+        // Auto-detectar scripts si no se asignaron
+        if (playerHealth == null && enemyHealth == null)
+        {
+            playerHealth = GetComponentInParent<PlayerHealth>();
+            enemyHealth = GetComponentInParent<EnemyHealth>();
+        }
+
+        // ¡A PRUEBA DE BALAS! Si el usuario olvidó poner el Horizontal Layout Group al recrear el objeto, se lo ponemos por código
+        HorizontalLayoutGroup hlg = GetComponent<HorizontalLayoutGroup>();
+        if (hlg == null)
+        {
+            hlg = gameObject.AddComponent<HorizontalLayoutGroup>();
+            hlg.childAlignment = TextAnchor.MiddleCenter;
+            hlg.childControlWidth = true;
+            hlg.childControlHeight = true;
+            hlg.childForceExpandWidth = false;
+            hlg.childForceExpandHeight = false;
+            hlg.spacing = 4;
+        }
+    }
+
     private void OnEnable()
     {
         if (playerHealth != null)
         {
             playerHealth.OnHealthChanged += UpdateHearts;
+        }
+        else if (enemyHealth != null)
+        {
+            enemyHealth.OnHealthChanged += UpdateHearts;
         }
     }
 
@@ -33,17 +63,37 @@ public class HeartUIManager : MonoBehaviour
         {
             playerHealth.OnHealthChanged -= UpdateHearts;
         }
+        
+        if (enemyHealth != null)
+        {
+            enemyHealth.OnHealthChanged -= UpdateHearts;
+        }
     }
 
     private void UpdateHearts(int currentHealth, int maxHealth)
     {
-        int totalHearts = maxHealth / 4;
+        int totalHearts = Mathf.CeilToInt(maxHealth / 4f);
 
-        // 1. Ajustar cantidad de GameObjects de corazones en la UI
         while (spawnedHearts.Count < totalHearts)
         {
-            GameObject newHeart = Instantiate(heartPrefab, transform);
+            // Instanciar como elemento UI falso para que no intente mantener posiciones de mundo gigantes
+            GameObject newHeart = Instantiate(heartPrefab, transform, false);
+            
+            RectTransform rt = newHeart.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.localScale = Vector3.one;
+                rt.anchoredPosition3D = Vector3.zero;
+            }
+            
             Image heartImage = newHeart.GetComponent<Image>();
+            
+            // Forzamos a que el sprite mantenga su proporción original y no se estire
+            if (heartImage != null)
+            {
+                heartImage.preserveAspect = true;
+            }
+            
             spawnedHearts.Add(heartImage);
         }
 

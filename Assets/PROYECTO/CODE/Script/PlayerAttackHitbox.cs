@@ -11,18 +11,56 @@ public class PlayerAttackHitbox : MonoBehaviour
     [Tooltip("Tiempo en segundos que el enemigo es empujado sin poder moverse.")]
     public float knockbackDuration = 0.15f;
 
+    private System.Collections.Generic.List<Collider2D> alreadyHit = new System.Collections.Generic.List<Collider2D>();
+
+    private Collider2D col;
+
+    private void Awake()
+    {
+        col = GetComponent<Collider2D>();
+    }
+
+    public void ClearHits()
+    {
+        alreadyHit.Clear();
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        IDamageable damageable = other.GetComponent<IDamageable>();
+        TryHit(other);
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        TryHit(other);
+    }
+
+    private void TryHit(Collider2D other)
+    {
+        // Si ya golpeamos a este colisionador durante esta ventana de golpe, lo ignoramos
+        if (alreadyHit.Contains(other)) return;
+
+        IDamageable damageable = other.GetComponentInParent<IDamageable>();
         if (damageable != null)
         {
+            alreadyHit.Add(other);
+            Debug.Log($"[Hitbox] Golpeando a: {other.gameObject.name}. Daño: {damage}");
             damageable.TakeDamage(damage);
 
-            EnemyController enemy = other.GetComponent<EnemyController>();
+            EnemyController enemy = other.GetComponentInParent<EnemyController>();
             if (enemy != null)
             {
-                // Dirección desde el jugador (padre del hitbox) hacia el enemigo
-                Vector2 knockbackDir = (other.transform.position - transform.parent.position).normalized;
+                // Dirección desde el jugador (centro o hitbox) hacia el enemigo
+                Vector3 origin = transform.parent != null ? transform.parent.position : transform.position;
+                Vector2 knockbackDir = (other.transform.position - origin).normalized;
+                
+                // Si la dirección es cero o muy pequeña (superposición total), usamos la dirección del ataque
+                if (knockbackDir.sqrMagnitude < 0.01f)
+                {
+                    knockbackDir = transform.localPosition.normalized;
+                }
+                
+                Debug.Log($"[Hitbox] EnemyController encontrado. Aplicando knockback: dir={knockbackDir}, force={knockbackForce}, duration={knockbackDuration}");
                 enemy.ApplyKnockback(knockbackDir, knockbackForce, knockbackDuration);
             }
         }

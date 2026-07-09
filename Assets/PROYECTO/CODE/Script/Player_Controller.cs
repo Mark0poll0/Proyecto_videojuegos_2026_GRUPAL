@@ -18,10 +18,15 @@ public class Player_Controller : MonoBehaviour
     [Tooltip("Segundos que espera tras un golpe para encadenar el siguiente antes de resetear el combo.")]
     [SerializeField] private float comboWindow = 0.35f;
 
+    [Header("Configuración del Hitbox")]
     [Tooltip("Collider (trigger) del hitbox de daño. Se activa solo durante la ventana de cada golpe.")]
     [SerializeField] private Collider2D attackHitboxCollider;
     [Tooltip("Distancia desde el jugador a la que se posiciona el hitbox, según la dirección del golpe.")]
     [SerializeField] private float attackHitboxOffset = 0.55f;
+    [Tooltip("Tamaño del hitbox al atacar a los lados (Left/Right). X=alcance frontal, Y=margen de altura (para no fallar si no estás al mismo nivel).")]
+    [SerializeField] private Vector2 hitboxSizeHorizontal = new Vector2(0.8f, 1.5f);
+    [Tooltip("Tamaño del hitbox al atacar arriba/abajo (Up/Down). X=margen de anchura, Y=alcance frontal.")]
+    [SerializeField] private Vector2 hitboxSizeVertical = new Vector2(1.5f, 0.8f);
 
     [Header("Sonidos (SFX)")]
     [Tooltip("Fuente de audio local del personaje para efectos de sonido.")]
@@ -215,7 +220,18 @@ public class Player_Controller : MonoBehaviour
 
             // Activamos el hitbox de daño durante la ventana de este golpe
             PositionAttackHitbox(comboDir);
-            if (attackHitboxCollider != null) attackHitboxCollider.enabled = true;
+            if (attackHitboxCollider != null)
+            {
+                attackHitboxCollider.enabled = true;
+                
+                // Buscamos el script tanto en el propio collider como en el padre (el jugador)
+                PlayerAttackHitbox hitbox = attackHitboxCollider.GetComponent<PlayerAttackHitbox>();
+                if (hitbox == null) 
+                    hitbox = attackHitboxCollider.GetComponentInParent<PlayerAttackHitbox>();
+                    
+                if (hitbox != null) 
+                    hitbox.ClearHits();
+            }
 
             // Avanzamos hasta el final del tramo
             while (animator.GetCurrentAnimatorStateInfo(0).IsName(state) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < fin)
@@ -269,14 +285,36 @@ public class Player_Controller : MonoBehaviour
     private void PositionAttackHitbox(string dir)
     {
         if (attackHitboxCollider == null) return;
+        Vector2 offset = Vector2.zero;
+        Vector2 size = Vector2.one;
 
-        Vector2 offset = Vector2.down;
-        if (dir == "up") offset = Vector2.up;
-        else if (dir == "down") offset = Vector2.down;
-        else if (dir == "left") offset = Vector2.right;
-        else if (dir == "right") offset = Vector2.left;
+        switch (dir)
+        {
+            case "up":
+                offset = Vector2.up;
+                size = hitboxSizeVertical;
+                break;
+            case "down":
+                offset = Vector2.down;
+                size = hitboxSizeVertical;
+                break;
+            case "left":
+                offset = Vector2.right; // Mantenemos la inversión original del proyecto
+                size = hitboxSizeHorizontal;
+                break;
+            case "right":
+                offset = Vector2.left; // Mantenemos la inversión original del proyecto
+                size = hitboxSizeHorizontal;
+                break;
+        }
 
         attackHitboxCollider.transform.localPosition = offset * attackHitboxOffset;
+        
+        BoxCollider2D boxCol = attackHitboxCollider as BoxCollider2D;
+        if (boxCol != null)
+        {
+            boxCol.size = size;
+        }
     }
 
     private AnimationClip GetAnimationClip(string name)

@@ -140,9 +140,7 @@ public class EnemyController : MonoBehaviour
         if (knockbackTimer > 0f)
         {
             knockbackTimer -= Time.fixedDeltaTime;
-            // Desaceleración suave del empuje
-            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, Time.fixedDeltaTime * 8f);
-            return; // Mantiene la velocidad del knockback y previene movimiento de persecución (stun)
+            return; // Permite que la física de Unity mueva al enemigo con la velocidad del knockback y bloquea la IA
         }
 
         if (isAttacking)
@@ -307,6 +305,7 @@ public class EnemyController : MonoBehaviour
     public void ApplyKnockback(Vector2 direction, float force, float duration)
     {
         if (isDead) return;
+        Debug.Log($"[Enemy] ApplyKnockback recibido en {gameObject.name}. Dir={direction}, Force={force}, Duration={duration}");
 
         // Cancelar el ataque si el enemigo estaba atacando
         if (attackCoroutine != null)
