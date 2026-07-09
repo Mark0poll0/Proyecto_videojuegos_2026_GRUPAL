@@ -74,15 +74,18 @@ public class ProceduralMapGenerator : MonoBehaviour
     [Header("Decoración por Tiles")]
     [Range(0f, 0.1f)] [SerializeField] private float probabilidadFlores = 0.07f;
 
-    [Header("Densidad de Prefabs Decorativos (0 a 1)")]
+    [Header("Densidad de Prefabs (0 a 1)")]
     [Range(0f, 0.2f)] [SerializeField] private float densidadPlantas = 0.05f;
     [Range(0f, 0.2f)] [SerializeField] private float densidadProps = 0.02f;
+    [Range(0f, 0.05f)] [SerializeField] private float densidadEnemigos = 0.008f;
 
     [Header("Colecciones de Prefabs (Opcional)")]
     [Tooltip("Si se deja vacío, se cargarán todos los prefabs de Assets/PROYECTO/PREFABS/Plant")]
     [SerializeField] private GameObject[] prefabsPlantasManual;
     [Tooltip("Si se deja vacío, se cargarán todos los prefabs de Assets/PROYECTO/PREFABS/Props (excepto escaleras)")]
     [SerializeField] private GameObject[] prefabsPropsManual;
+    [Tooltip("Si se deja vacío, se cargarán todos los prefabs de Assets/PROYECTO/PREFABS/Enemy")]
+    [SerializeField] private GameObject prefabEnemigoManual;
 
     /// <summary>
     /// Genera 5 zonas distribuidas en forma de cruz/quincuncio (Centro y 4 esquinas),
@@ -151,6 +154,16 @@ public class ProceduralMapGenerator : MonoBehaviour
             prefabsProps = LoadPrefabsFromPath("Props", new string[] { "Stairs", "Struct", "Gate" });
         }
 
+        GameObject[] prefabsEnemigos;
+        if (prefabEnemigoManual != null)
+        {
+            prefabsEnemigos = new GameObject[] { prefabEnemigoManual };
+        }
+        else
+        {
+            prefabsEnemigos = LoadPrefabsFromPath("Enemy");
+        }
+
         // 4. Crear contenedor de decoración en la escena
         GameObject containerObj = new GameObject("DecorationsContainer");
         containerObj.transform.parent = transform;
@@ -159,6 +172,16 @@ public class ProceduralMapGenerator : MonoBehaviour
 
 #if UNITY_EDITOR
         Undo.RegisterCreatedObjectUndo(containerObj, "Generar Mapa - Decoraciones");
+#endif
+
+        // Crear contenedor de enemigos en la escena
+        GameObject enemiesContainerObj = new GameObject("EnemiesContainer");
+        enemiesContainerObj.transform.parent = transform;
+        enemiesContainerObj.transform.localPosition = Vector3.zero;
+        Transform enemiesContainer = enemiesContainerObj.transform;
+
+#if UNITY_EDITOR
+        Undo.RegisterCreatedObjectUndo(enemiesContainerObj, "Generar Mapa - Enemigos");
 #endif
 
         // 5. Matriz lógica de pasto
@@ -250,10 +273,19 @@ public class ProceduralMapGenerator : MonoBehaviour
                         if (t != null) wallTilemap.SetTile(new Vector3Int(worldX, worldY, 0), t);
                     }
 
-                    // 4. Instanciación aleatoria de Prefabs Decorativos (solo si no se colocó un muro aquí)
+                    // 4. Instanciación aleatoria de Prefabs Decorativos y Enemigos (solo si no se colocó un muro aquí)
                     if (!tieneMuro)
                     {
-                        if (prefabsPlantas.Length > 0 && Random.value < densidadPlantas)
+                        // Evitamos spawnear enemigos muy cerca del centro donde empieza el jugador
+                        float distAlCentro = Vector2.Distance(new Vector2(x, y), new Vector2(anchoLienzo / 2, altoLienzo / 2));
+
+                        if (distAlCentro > 6f && prefabsEnemigos != null && prefabsEnemigos.Length > 0 && Random.value < densidadEnemigos)
+                        {
+                            GameObject enemigoElegido = prefabsEnemigos[Random.Range(0, prefabsEnemigos.Length)];
+                            Vector3 pos = grassTilemap.GetCellCenterWorld(new Vector3Int(worldX, worldY, 0));
+                            SpawnPrefab(enemigoElegido, pos, enemiesContainer);
+                        }
+                        else if (prefabsPlantas.Length > 0 && Random.value < densidadPlantas)
                         {
                             GameObject plantaElegida = prefabsPlantas[Random.Range(0, prefabsPlantas.Length)];
                             Vector3 pos = grassTilemap.GetCellCenterWorld(new Vector3Int(worldX, worldY, 0));
@@ -364,6 +396,11 @@ public class ProceduralMapGenerator : MonoBehaviour
         if (container != null)
         {
             DestroyImmediate(container.gameObject);
+        }
+        Transform enemiesContainer = transform.Find("EnemiesContainer");
+        if (enemiesContainer != null)
+        {
+            DestroyImmediate(enemiesContainer.gameObject);
         }
     }
 
