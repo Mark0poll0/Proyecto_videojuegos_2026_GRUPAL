@@ -274,6 +274,19 @@ public class EnemyController : MonoBehaviour
         isDead = true;
         state = EnemyState.Dead;
 
+        // Desactivar la física por completo para que no sea empujado ni registre más colisiones
+        rb.linearVelocity = Vector2.zero;
+        rb.simulated = false;
+
+        // Limpiar triggers del Animator para que transiciones pendientes de "Hit" no interrumpan la muerte
+        animator.ResetTrigger("Hit");
+        if (attackTriggerParam != null) animator.ResetTrigger(attackTriggerParam);
+
+        // Resetear parámetros de movimiento
+        animator.SetFloat("Speed", 0f);
+        if (moveXParam != null) animator.SetFloat(moveXParam, 0f);
+        if (moveYParam != null) animator.SetFloat(moveYParam, 0f);
+
         string comboDir = GetDirectionString();
         string stateName = "death_" + comboDir;
         if (GetAnimationClip(stateName) != null)
@@ -284,8 +297,6 @@ public class EnemyController : MonoBehaviour
         {
             animator.SetTrigger("Dead");
         }
-
-        rb.linearVelocity = Vector2.zero;
 
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;

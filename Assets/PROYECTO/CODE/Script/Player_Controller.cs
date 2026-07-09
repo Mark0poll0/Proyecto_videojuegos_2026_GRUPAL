@@ -53,6 +53,8 @@ public class Player_Controller : MonoBehaviour
     private bool isAttacking;
     private bool comboQueued;   // se marca al presionar Z durante un golpe para encadenar el siguiente
     private string comboDir;    // dirección fijada al iniciar el combo ("up"/"down"/"left"/"right")
+    private bool isDead;
+    private Coroutine comboCoroutine;
 
     private void Awake()
     {
@@ -91,6 +93,9 @@ public class Player_Controller : MonoBehaviour
 
     private void Update()
     {
+        if (isDead)
+            return;
+
         // Mientras ataca, el ataque tiene prioridad: no leemos movimiento
         if (isAttacking)
             return;
@@ -113,6 +118,12 @@ public class Player_Controller : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isDead)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         // Si está atacando y el bloqueo está activo, se queda quieto
         if (isAttacking && bloquearMovimientoAlAtacar)
         {
@@ -127,13 +138,13 @@ public class Player_Controller : MonoBehaviour
     // Se dispara cuando se presiona la acción Attack (tecla Z)
     private void OnAttack(InputAction.CallbackContext context)
     {
-        if (this == null) return; // Salvaguarda si el objeto de Unity ha sido destruido
+        if (this == null || isDead) return; // Salvaguarda si el objeto de Unity ha sido destruido o está muerto
 
         if (!isAttacking)
         {
             // Inicio del combo: fijamos la dirección y arrancamos la corrutina
             comboDir = GetAttackDirection();
-            StartCoroutine(ComboRoutine());
+            comboCoroutine = StartCoroutine(ComboRoutine());
         }
         else
         {
@@ -236,6 +247,7 @@ public class Player_Controller : MonoBehaviour
         animator.speed = 1f;
         animator.Play("Idle", 0, 0f);
         isAttacking = false;
+        comboCoroutine = null;
     }
 
     // Devuelve la dirección del ataque según el eje dominante de la última dirección mirada.
@@ -306,9 +318,30 @@ public class Player_Controller : MonoBehaviour
     [ContextMenu("Probar Muerte (Die)")]
     public void Die()
     {
+        isDead = true;
+
+        // Cancelar el combo activo para evitar que vuelva a Idle
+        if (comboCoroutine != null)
+        {
+            StopCoroutine(comboCoroutine);
+            comboCoroutine = null;
+        }
+        isAttacking = false;
+
+        // Deshabilitar controles del jugador
+        if (controls != null)
+        {
+            controls.Gameplay.Disable();
+        }
+
+        // Frenar por completo el Rigidbody
+        rb.linearVelocity = Vector2.zero;
+
         if (animator != null)
         {
-            animator.SetTrigger("Dead");
+            animator.speed = 1f;
+            animator.Play("die", 0, 0f); // Forzamos el estado de muerte directamente para evitar que quede atrapado en un ataque
+            animator.SetTrigger("Dead"); // Mantenemos el trigger para compatibilidad
         }
         PlayRandomSFX(deathSounds);
     }

@@ -460,9 +460,8 @@ public class ProceduralMapGenerator : MonoBehaviour
 
     private void GenerateZone(int centerX, int centerY, bool[,] isGrass)
     {
-        int minSize = Mathf.Min(minHabitaciones, maxHabitaciones);
-        int maxSize = Mathf.Max(minHabitaciones, maxHabitaciones);
-
+        int minSize = Mathf.Min(tamMinHabitacion, tamMaxHabitacion);
+        int maxSize = Mathf.Max(tamMinHabitacion, tamMaxHabitacion);
         int startW = Random.Range(minSize, maxSize + 1);
         int startH = Random.Range(minSize, maxSize + 1);
         AddRoom(centerX - startW / 2, centerY - startH / 2, startW, startH, isGrass);
