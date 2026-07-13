@@ -98,7 +98,7 @@ public class Player_Controller : MonoBehaviour
 
     private void Update()
     {
-        if (isDead)
+        if (isDead || Time.timeScale == 0f)
             return;
 
         // Mientras ataca, el ataque tiene prioridad: no leemos movimiento
@@ -143,7 +143,7 @@ public class Player_Controller : MonoBehaviour
     // Se dispara cuando se presiona la acción Attack (tecla Z)
     private void OnAttack(InputAction.CallbackContext context)
     {
-        if (this == null || isDead) return; // Salvaguarda si el objeto de Unity ha sido destruido o está muerto
+        if (this == null || isDead || Time.timeScale == 0f) return; // Salvaguarda si el objeto de Unity ha sido destruido, está muerto o pausado
 
         if (!isAttacking)
         {
