@@ -263,7 +263,7 @@ public class EnemyController : MonoBehaviour
         // Se descarta el aviso inicial (current == max) y la muerte (current == 0, ver HandleDeath).
         if (current > 0 && current < max)
         {
-            animator.SetTrigger("Hit");
+            animator.Play("Hurt", 0, 0f);
         }
     }
 
@@ -315,9 +315,6 @@ public class EnemyController : MonoBehaviour
         }
         isAttacking = false;
         animator.speed = 1f;
-
-        // Forzar animación de impacto/aturdimiento usando el trigger del Blend Tree
-        animator.SetTrigger("Hit");
 
         // Activar el temporizador de aturdimiento y aplicar velocidad inicial del empuje
         knockbackTimer = duration;
