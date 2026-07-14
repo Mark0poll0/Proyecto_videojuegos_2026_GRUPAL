@@ -12,8 +12,15 @@ public class Player_Controller : MonoBehaviour
     [Tooltip("Si está activo, el jugador se queda quieto mientras ataca.")]
     [SerializeField] private bool bloquearMovimientoAlAtacar = true;
 
-    [Tooltip("Cantidad de frames que dura cada golpe del combo.")]
-    [SerializeField] private int framesPerHit = 5;
+    [Header("Combos - Dinámicas")]
+    [Tooltip("Fuerza de empuje para los golpes 1 y 2")]
+    [SerializeField] private float lightKnockbackForce = 12f;
+    
+    [Tooltip("Fuerza de empuje para el golpe final (3)")]
+    [SerializeField] private float heavyKnockbackForce = 25f;
+
+    [Tooltip("Fuerza de impulso hacia adelante (lunge) al dar cada golpe")]
+    [SerializeField] private float lungeForce = 0f;
 
     [Tooltip("Segundos que espera tras un golpe para encadenar el siguiente antes de resetear el combo.")]
     [SerializeField] private float comboWindow = 0.35f;
@@ -129,10 +136,10 @@ public class Player_Controller : MonoBehaviour
             return;
         }
 
-        // Si está atacando y el bloqueo está activo, se queda quieto
+        // Si está atacando y el bloqueo está activo, no aplicamos input de movimiento manual
         if (isAttacking && bloquearMovimientoAlAtacar)
         {
-            rb.linearVelocity = Vector2.zero;
+            // Quitamos el rb.linearVelocity = Vector2.zero constante para permitir el impulso (lunge)
             return;
         }
 
@@ -168,49 +175,35 @@ public class Player_Controller : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         animator.SetFloat("Speed", 0f);
 
-        // Usamos el clip "en su lugar" (_stay) de la dirección fijada
-        string state = "attack_" + comboDir + "_stay";
-
-        // Intentamos obtener la información del clip de forma directa por su nombre
-        float totalFrames = 20f; // Valor de respaldo por defecto
-        AnimationClip clip = GetAnimationClip(state);
-        if (clip != null)
+        for (int step = 0; step < 3; step++)
         {
-            totalFrames = clip.length * clip.frameRate;
-        }
-
-        // Calculamos los cortes en tiempo normalizado (0 a 1) para que dure 'framesPerHit' por golpe
-        float normalizedStep = (float)framesPerHit / totalFrames;
-        float[] cuts = new float[] { 
-            0f, 
-            normalizedStep, 
-            normalizedStep * 2f, 
-            1f // El tercer golpe va hasta el final de la animación para completarla
-        };
-
-        int golpes = cuts.Length - 1; // 3 golpes
-        for (int step = 0; step < golpes; step++)
-        {
-            float inicio = cuts[step];
-            float fin = cuts[step + 1];
+            // Reproducimos la animación específica del paso (e.g. "attack_down_stay 1")
+            string state = $"attack_{comboDir}_stay {step + 1}";
 
             // Reproducimos el sonido de esfuerzo según el paso del combo
-            if (step == 0)
-                PlayRandomSFX(attack1Sounds);
-            else if (step == 1)
-                PlayRandomSFX(attack2Sounds);
-            else if (step == 2)
-                PlayRandomSFX(attack3Sounds);
+            if (step == 0) PlayRandomSFX(attack1Sounds);
+            else if (step == 1) PlayRandomSFX(attack2Sounds);
+            else if (step == 2) PlayRandomSFX(attack3Sounds);
 
-            // Reproducimos un sonido de espada aleatorio en cada golpe del combo
+            // Reproducimos un sonido de espada aleatorio
             PlayRandomSFX(swordSounds);
 
-            // Reproducimos el tramo [inicio, fin] del clip
+            // Aplicar impulso hacia adelante (lunge)
+            Vector2 lungeDir = Vector2.zero;
+            switch (comboDir)
+            {
+                case "up": lungeDir = Vector2.up; break;
+                case "down": lungeDir = Vector2.down; break;
+                case "left": lungeDir = Vector2.right; break; // Invertido físicamente
+                case "right": lungeDir = Vector2.left; break; // Invertido físicamente
+            }
+            rb.linearVelocity = lungeDir * lungeForce;
+
             animator.speed = 1f;
-            animator.Play(state, 0, inicio);
+            animator.Play(state, 0, 0f);
             yield return null; // Dejamos pasar un frame para iniciar la transición
 
-            // Esperamos un frame y verificamos si ya entró al estado (con un límite de seguridad de 5 frames)
+            // Esperamos a que entre al estado
             int safetyCounter = 0;
             while (!animator.GetCurrentAnimatorStateInfo(0).IsName(state) && safetyCounter < 5)
             {
@@ -218,31 +211,36 @@ public class Player_Controller : MonoBehaviour
                 yield return null;
             }
 
-            // Activamos el hitbox de daño durante la ventana de este golpe
+            // Activamos el hitbox
             PositionAttackHitbox(comboDir);
             if (attackHitboxCollider != null)
             {
                 attackHitboxCollider.enabled = true;
                 
-                // Buscamos el script tanto en el propio collider como en el padre (el jugador)
                 PlayerAttackHitbox hitbox = attackHitboxCollider.GetComponent<PlayerAttackHitbox>();
                 if (hitbox == null) 
                     hitbox = attackHitboxCollider.GetComponentInParent<PlayerAttackHitbox>();
                     
                 if (hitbox != null) 
+                {
                     hitbox.ClearHits();
+                    // Configurar empuje dinámico (leve para 1 y 2, fuerte para el 3)
+                    hitbox.knockbackForce = (step == 2) ? heavyKnockbackForce : lightKnockbackForce;
+                    hitbox.knockbackDuration = (step == 2) ? 0.2f : 0.1f;
+                }
             }
 
-            // Avanzamos hasta el final del tramo
-            while (animator.GetCurrentAnimatorStateInfo(0).IsName(state) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < fin)
+            // Avanzamos hasta el final de la animación de este golpe
+            while (animator.GetCurrentAnimatorStateInfo(0).IsName(state) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
             {
                 yield return null;
             }
 
-            // Desactivamos el hitbox al terminar la ventana de golpe
+            // Desactivamos el hitbox al terminar
             if (attackHitboxCollider != null) attackHitboxCollider.enabled = false;
 
-            // Congelamos en el último frame del golpe
+            // Frenar al personaje al terminar el golpe
+            rb.linearVelocity = Vector2.zero;
             animator.speed = 0f;
 
             // Ventana de encadenado: esperamos un Z para el siguiente golpe
@@ -259,7 +257,7 @@ public class Player_Controller : MonoBehaviour
             comboQueued = false; // consumimos el golpe encadenado y seguimos
         }
 
-        // Volvemos al Blend Tree de Idle (retomará Walk/Idle según el input)
+        // Volvemos al Blend Tree de Idle
         animator.speed = 1f;
         animator.Play("Idle", 0, 0f);
         isAttacking = false;
