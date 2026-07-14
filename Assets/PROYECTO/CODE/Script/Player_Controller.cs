@@ -22,6 +22,9 @@ public class Player_Controller : MonoBehaviour
     [Tooltip("Fuerza de impulso hacia adelante (lunge) al dar cada golpe")]
     [SerializeField] private float lungeForce = 0f;
 
+    [Tooltip("Tamaño del hitbox de área (todas las direcciones) para el tercer golpe")]
+    [SerializeField] private Vector2 hitboxSizeAOE = new Vector2(2.5f, 2.5f);
+
     [Tooltip("Segundos que espera tras un golpe para encadenar el siguiente antes de resetear el combo.")]
     [SerializeField] private float comboWindow = 0.35f;
 
@@ -199,20 +202,16 @@ public class Player_Controller : MonoBehaviour
             }
             rb.linearVelocity = lungeDir * lungeForce;
 
+            // Obtener la duración del clip de animación
+            AnimationClip clip = GetAnimationClip(state);
+            float duration = clip != null ? clip.length : 0.3f;
+
             animator.speed = 1f;
             animator.Play(state, 0, 0f);
             yield return null; // Dejamos pasar un frame para iniciar la transición
 
-            // Esperamos a que entre al estado
-            int safetyCounter = 0;
-            while (!animator.GetCurrentAnimatorStateInfo(0).IsName(state) && safetyCounter < 5)
-            {
-                safetyCounter++;
-                yield return null;
-            }
-
-            // Activamos el hitbox
-            PositionAttackHitbox(comboDir);
+            // Activamos el hitbox (el tercer golpe, step == 2, es AOE en todas las direcciones)
+            PositionAttackHitbox(comboDir, step == 2);
             if (attackHitboxCollider != null)
             {
                 attackHitboxCollider.enabled = true;
@@ -230,9 +229,13 @@ public class Player_Controller : MonoBehaviour
                 }
             }
 
-            // Avanzamos hasta el final de la animación de este golpe
-            while (animator.GetCurrentAnimatorStateInfo(0).IsName(state) && animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+            // Avanzamos hasta el final de la animación usando el tiempo del clip
+            float elapsed = 0f;
+            // Restamos un frame estimado del total para compensar el yield return null inicial
+            float waitDuration = Mathf.Max(0.05f, duration - Time.deltaTime);
+            while (elapsed < waitDuration)
             {
+                elapsed += Time.deltaTime;
                 yield return null;
             }
 
@@ -277,36 +280,42 @@ public class Player_Controller : MonoBehaviour
     }
 
     // Posiciona el hitbox de ataque frente al jugador según la dirección del golpe.
-    // "dir" (comboDir) viene con left/right invertidos respecto al mundo real, igual que en
-    // GetAttackDirection (por el espejado de los sprites) — aquí los volvemos a invertir para
-    // colocar el hitbox del lado físico correcto (donde realmente se ve el golpe).
-    private void PositionAttackHitbox(string dir)
+    // Si isAOE es true (tercer golpe), el hitbox se centra en el jugador y cubre todas las direcciones.
+    private void PositionAttackHitbox(string dir, bool isAOE = false)
     {
         if (attackHitboxCollider == null) return;
         Vector2 offset = Vector2.zero;
         Vector2 size = Vector2.one;
 
-        switch (dir)
+        if (isAOE)
         {
-            case "up":
-                offset = Vector2.up;
-                size = hitboxSizeVertical;
-                break;
-            case "down":
-                offset = Vector2.down;
-                size = hitboxSizeVertical;
-                break;
-            case "left":
-                offset = Vector2.right; // Mantenemos la inversión original del proyecto
-                size = hitboxSizeHorizontal;
-                break;
-            case "right":
-                offset = Vector2.left; // Mantenemos la inversión original del proyecto
-                size = hitboxSizeHorizontal;
-                break;
+            offset = Vector2.zero;
+            size = hitboxSizeAOE;
+        }
+        else
+        {
+            switch (dir)
+            {
+                case "up":
+                    offset = Vector2.up;
+                    size = hitboxSizeVertical;
+                    break;
+                case "down":
+                    offset = Vector2.down;
+                    size = hitboxSizeVertical;
+                    break;
+                case "left":
+                    offset = Vector2.right; // Mantenemos la inversión original del proyecto
+                    size = hitboxSizeHorizontal;
+                    break;
+                case "right":
+                    offset = Vector2.left; // Mantenemos la inversión original del proyecto
+                    size = hitboxSizeHorizontal;
+                    break;
+            }
         }
 
-        attackHitboxCollider.transform.localPosition = offset * attackHitboxOffset;
+        attackHitboxCollider.transform.localPosition = offset * (isAOE ? 0f : attackHitboxOffset);
         
         BoxCollider2D boxCol = attackHitboxCollider as BoxCollider2D;
         if (boxCol != null)

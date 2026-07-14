@@ -272,6 +272,12 @@ public class EnemyController : MonoBehaviour
         isDead = true;
         state = EnemyState.Dead;
 
+        // Curar al jugador 2 pedazos de corazón (2 puntos de vida) al morir este enemigo
+        if (playerHealth != null)
+        {
+            playerHealth.Heal(2);
+        }
+
         // Desactivar la física por completo para que no sea empujado ni registre más colisiones
         rb.linearVelocity = Vector2.zero;
         rb.simulated = false;
