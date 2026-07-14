@@ -1,0 +1,962 @@
+fileFormatVersion: 2
+guid: a3b53a846d9fc08449a303ea6bc0b51c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2235425420069329276
+    second: Vampires1_Run_without_shadow_0
+  - first:
+      213: -2339747398068102762
+    second: Vampires1_Run_without_shadow_1
+  - first:
+      213: 7599685007576637373
+    second: Vampires1_Run_without_shadow_2
+  - first:
+      213: 7796513316580700591
+    second: Vampires1_Run_without_shadow_3
+  - first:
+      213: 947083934101457589
+    second: Vampires1_Run_without_shadow_4
+  - first:
+      213: 7656288821551106390
+    second: Vampires1_Run_without_shadow_5
+  - first:
+      213: -8870130482082386684
+    second: Vampires1_Run_without_shadow_6
+  - first:
+      213: 3722463453431224778
+    second: Vampires1_Run_without_shadow_7
+  - first:
+      213: -4143546169950364484
+    second: Vampires1_Run_without_shadow_8
+  - first:
+      213: 4858048566561552356
+    second: Vampires1_Run_without_shadow_9
+  - first:
+      213: 5079248260517024735
+    second: Vampires1_Run_without_shadow_10
+  - first:
+      213: -5125863555911221232
+    second: Vampires1_Run_without_shadow_11
+  - first:
+      213: 678710579385319626
+    second: Vampires1_Run_without_shadow_12
+  - first:
+      213: -4219561092883370506
+    second: Vampires1_Run_without_shadow_13
+  - first:
+      213: 7099833382535249916
+    second: Vampires1_Run_without_shadow_14
+  - first:
+      213: -2486882476569925113
+    second: Vampires1_Run_without_shadow_15
+  - first:
+      213: 3360648812882117964
+    second: Vampires1_Run_without_shadow_16
+  - first:
+      213: 6305067952755292784
+    second: Vampires1_Run_without_shadow_17
+  - first:
+      213: -1040502681261616922
+    second: Vampires1_Run_without_shadow_18
+  - first:
+      213: -2997606860107549767
+    second: Vampires1_Run_without_shadow_19
+  - first:
+      213: -4467662783019008369
+    second: Vampires1_Run_without_shadow_20
+  - first:
+      213: 7868898684026441827
+    second: Vampires1_Run_without_shadow_21
+  - first:
+      213: -7390399376228575460
+    second: Vampires1_Run_without_shadow_22
+  - first:
+      213: 6250594629945112596
+    second: Vampires1_Run_without_shadow_23
+  - first:
+      213: -1650475243769257649
+    second: Vampires1_Run_without_shadow_24
+  - first:
+      213: -1878222054757368346
+    second: Vampires1_Run_without_shadow_25
+  - first:
+      213: -6244294102123879237
+    second: Vampires1_Run_without_shadow_26
+  - first:
+      213: -5127442657847015310
+    second: Vampires1_Run_without_shadow_27
+  - first:
+      213: 8110806802565076665
+    second: Vampires1_Run_without_shadow_28
+  - first:
+      213: 6348036106109227212
+    second: Vampires1_Run_without_shadow_29
+  - first:
+      213: 1562877252868802573
+    second: Vampires1_Run_without_shadow_30
+  - first:
+      213: 6686418928330175799
+    second: Vampires1_Run_without_shadow_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_0
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 215
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c795c156393d50f10800000000000000
+      internalID: 2235425420069329276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_1
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 218
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6999102532c878fd0800000000000000
+      internalID: -2339747398068102762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_2
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 220
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbf9771ef31877960800000000000000
+      internalID: 7599685007576637373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_3
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 218
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa13561cd87c23c60800000000000000
+      internalID: 7796513316580700591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_4
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 215
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bac898f1d7b42d00800000000000000
+      internalID: 947083934101457589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_5
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 214
+        width: 31
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65909525e1a904a60800000000000000
+      internalID: 7656288821551106390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_6
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 212
+        width: 29
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40d6d109257f6e480800000000000000
+      internalID: -8870130482082386684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_7
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 214
+        width: 33
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac95427d9c8d8a330800000000000000
+      internalID: 3722463453431224778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_8
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 151
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbc9dad36ba2f76c0800000000000000
+      internalID: -4143546169950364484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_9
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 154
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e73f77ae614b6340800000000000000
+      internalID: 4858048566561552356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_10
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 156
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd35326c16d1d7640800000000000000
+      internalID: 5079248260517024735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_11
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 154
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0108acef0464dd8b0800000000000000
+      internalID: -5125863555911221232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_12
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 151
+        width: 27
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac0cf8d0da34b6900800000000000000
+      internalID: 678710579385319626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_13
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 150
+        width: 31
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fda0aeca8b1175c0800000000000000
+      internalID: -4219561092883370506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_14
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 148
+        width: 29
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cff397a48dca78260800000000000000
+      internalID: 7099833382535249916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_15
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 150
+        width: 33
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70ae7e94091dc7dd0800000000000000
+      internalID: -2486882476569925113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_16
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 87
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c454da23a4c63ae20800000000000000
+      internalID: 3360648812882117964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_17
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 90
+        width: 21
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07abda8b5e9108750800000000000000
+      internalID: 6305067952755292784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_18
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 91
+        width: 19
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e05f8ff2546f81f0800000000000000
+      internalID: -1040502681261616922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_19
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 90
+        width: 22
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b3f307517c5666d0800000000000000
+      internalID: -2997606860107549767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_20
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 87
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8e3be99e5caff1c0800000000000000
+      internalID: -4467662783019008369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_21
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 86
+        width: 26
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3605fe279a1f33d60800000000000000
+      internalID: 7868898684026441827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_22
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 84
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1790af5ce6007990800000000000000
+      internalID: -7390399376228575460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_23
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 86
+        width: 27
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 418b7d8e2b29eb650800000000000000
+      internalID: 6250594629945112596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_24
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 23
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f41ae88a2855819e0800000000000000
+      internalID: -1650475243769257649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_25
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 26
+        width: 21
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6edf1e01ef63fe5e0800000000000000
+      internalID: -1878222054757368346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_26
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 27
+        width: 19
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb4e6d9099fc759a0800000000000000
+      internalID: -6244294102123879237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_27
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 26
+        width: 22
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27808dca11aa7d8b0800000000000000
+      internalID: -5127442657847015310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_28
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 23
+        width: 24
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b696b460df5f8070800000000000000
+      internalID: 8110806802565076665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_29
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 22
+        width: 26
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc09ef58431c81850800000000000000
+      internalID: 6348036106109227212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_30
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 20
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0888ccb49470b510800000000000000
+      internalID: 1562877252868802573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampires1_Run_without_shadow_31
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 22
+        width: 27
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7357192d69eeacc50800000000000000
+      internalID: 6686418928330175799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Vampires1_Run_without_shadow_0: 2235425420069329276
+      Vampires1_Run_without_shadow_1: -2339747398068102762
+      Vampires1_Run_without_shadow_10: 5079248260517024735
+      Vampires1_Run_without_shadow_11: -5125863555911221232
+      Vampires1_Run_without_shadow_12: 678710579385319626
+      Vampires1_Run_without_shadow_13: -4219561092883370506
+      Vampires1_Run_without_shadow_14: 7099833382535249916
+      Vampires1_Run_without_shadow_15: -2486882476569925113
+      Vampires1_Run_without_shadow_16: 3360648812882117964
+      Vampires1_Run_without_shadow_17: 6305067952755292784
+      Vampires1_Run_without_shadow_18: -1040502681261616922
+      Vampires1_Run_without_shadow_19: -2997606860107549767
+      Vampires1_Run_without_shadow_2: 7599685007576637373
+      Vampires1_Run_without_shadow_20: -4467662783019008369
+      Vampires1_Run_without_shadow_21: 7868898684026441827
+      Vampires1_Run_without_shadow_22: -7390399376228575460
+      Vampires1_Run_without_shadow_23: 6250594629945112596
+      Vampires1_Run_without_shadow_24: -1650475243769257649
+      Vampires1_Run_without_shadow_25: -1878222054757368346
+      Vampires1_Run_without_shadow_26: -6244294102123879237
+      Vampires1_Run_without_shadow_27: -5127442657847015310
+      Vampires1_Run_without_shadow_28: 8110806802565076665
+      Vampires1_Run_without_shadow_29: 6348036106109227212
+      Vampires1_Run_without_shadow_3: 7796513316580700591
+      Vampires1_Run_without_shadow_30: 1562877252868802573
+      Vampires1_Run_without_shadow_31: 6686418928330175799
+      Vampires1_Run_without_shadow_4: 947083934101457589
+      Vampires1_Run_without_shadow_5: 7656288821551106390
+      Vampires1_Run_without_shadow_6: -8870130482082386684
+      Vampires1_Run_without_shadow_7: 3722463453431224778
+      Vampires1_Run_without_shadow_8: -4143546169950364484
+      Vampires1_Run_without_shadow_9: 4858048566561552356
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
