@@ -72,6 +72,9 @@ public class HeartUIManager : MonoBehaviour
 
     private void UpdateHearts(int currentHealth, int maxHealth)
     {
+        // Limpiar cualquier referencia nula de corazones destruidos previamente
+        spawnedHearts.RemoveAll(heart => heart == null);
+
         int totalHearts = Mathf.CeilToInt(maxHealth / 4f);
 
         while (spawnedHearts.Count < totalHearts)
@@ -79,6 +82,8 @@ public class HeartUIManager : MonoBehaviour
             // Instanciar como elemento UI falso para que no intente mantener posiciones de mundo gigantes
             GameObject newHeart = Instantiate(heartPrefab, transform, false);
             
+            if (newHeart == null) continue;
+
             RectTransform rt = newHeart.GetComponent<RectTransform>();
             if (rt != null)
             {
@@ -99,13 +104,19 @@ public class HeartUIManager : MonoBehaviour
 
         while (spawnedHearts.Count > totalHearts)
         {
-            Destroy(spawnedHearts[spawnedHearts.Count - 1].gameObject);
-            spawnedHearts.RemoveAt(spawnedHearts.Count - 1);
+            int lastIndex = spawnedHearts.Count - 1;
+            if (spawnedHearts[lastIndex] != null && spawnedHearts[lastIndex].gameObject != null)
+            {
+                Destroy(spawnedHearts[lastIndex].gameObject);
+            }
+            spawnedHearts.RemoveAt(lastIndex);
         }
 
         // 2. Pintar cada corazón según la salud actual
         for (int i = 0; i < spawnedHearts.Count; i++)
         {
+            if (spawnedHearts[i] == null) continue; // Salvaguarda por si el objeto fue destruido
+
             // Puntos de vida que corresponden a este corazón en particular (ej: corazón 0 maneja vida 1-4)
             int minHealthValue = i * 4;
             int healthDifference = currentHealth - minHealthValue;
