@@ -298,7 +298,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.741
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -396,8 +396,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 8
   scoreValue: 30
-  sfxSource: {fileID: 0}
-  hurtSounds: []
+  sfxSource: {fileID: 2857800707460092022}
+  hurtSounds:
+  - {fileID: 8300000, guid: a8c2bd2c879ffca4b837f76f520d2232, type: 3}
+  - {fileID: 8300000, guid: 6518f12cf11f56b48a2841f8825dc637, type: 3}
+  - {fileID: 8300000, guid: 5b764d152e9cdb048bf4f95c5cfda1c9, type: 3}
+  - {fileID: 8300000, guid: ca96ab570c129424bb5678b929b36581, type: 3}
+  - {fileID: 8300000, guid: d2d82ccf20221e04883b8912c3d95ec6, type: 3}
+  - {fileID: 8300000, guid: 24dc58af0a3251f4ba7dd3c991af6f70, type: 3}
+  - {fileID: 8300000, guid: e75eb281ef4507940b3965ed5b868673, type: 3}
+  - {fileID: 8300000, guid: ff68da8f82b08094eb148da8ee350d52, type: 3}
   deathSounds: []
 --- !u!114 &8262956038595875839
 MonoBehaviour:

@@ -102,6 +102,11 @@ public class ProceduralMapGenerator : MonoBehaviour
     /// Genera 5 zonas distribuidas en forma de cruz/quincuncio (Centro y 4 esquinas),
     /// conectadas de forma laberíntica por pasillos más cortos con codos y bucles aleatorios.
     /// </summary>
+    private void Start()
+    {
+        GenerateMap();
+    }
+
     [ContextMenu("Generar Mapa")]
     public void GenerateMap()
     {
@@ -132,8 +137,11 @@ public class ProceduralMapGenerator : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        Undo.RegisterCompleteObjectUndo(grassTilemap, "Generar Mapa");
-        Undo.RegisterCompleteObjectUndo(wallTilemap, "Generar Mapa");
+        if (!Application.isPlaying)
+        {
+            Undo.RegisterCompleteObjectUndo(grassTilemap, "Generar Mapa");
+            Undo.RegisterCompleteObjectUndo(wallTilemap, "Generar Mapa");
+        }
 #endif
 
         // 1. Limpiar mapas y decoraciones previas
@@ -188,7 +196,10 @@ public class ProceduralMapGenerator : MonoBehaviour
         Transform decorContainer = containerObj.transform;
 
 #if UNITY_EDITOR
-        Undo.RegisterCreatedObjectUndo(containerObj, "Generar Mapa - Decoraciones");
+        if (!Application.isPlaying)
+        {
+            Undo.RegisterCreatedObjectUndo(containerObj, "Generar Mapa - Decoraciones");
+        }
 #endif
 
         // Crear contenedor de enemigos en la escena
@@ -198,7 +209,10 @@ public class ProceduralMapGenerator : MonoBehaviour
         Transform enemiesContainer = enemiesContainerObj.transform;
 
 #if UNITY_EDITOR
-        Undo.RegisterCreatedObjectUndo(enemiesContainerObj, "Generar Mapa - Enemigos");
+        if (!Application.isPlaying)
+        {
+            Undo.RegisterCreatedObjectUndo(enemiesContainerObj, "Generar Mapa - Enemigos");
+        }
 #endif
 
         // 5. Matriz lógica de pasto
@@ -384,11 +398,17 @@ public class ProceduralMapGenerator : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        EditorUtility.SetDirty(grassTilemap.gameObject);
-        EditorUtility.SetDirty(wallTilemap.gameObject);
+        if (!Application.isPlaying)
+        {
+            EditorUtility.SetDirty(grassTilemap.gameObject);
+            EditorUtility.SetDirty(wallTilemap.gameObject);
+        }
 #endif
 
-        Debug.Log("¡Mapa laberíntico de 5 zonas interconectadas y decorado generado con éxito! Deshaz con Ctrl+Z si es necesario.");
+        if (!Application.isPlaying)
+        {
+            Debug.Log("¡Mapa laberíntico de 5 zonas interconectadas y decorado generado con éxito! Deshaz con Ctrl+Z si es necesario.");
+        }
     }
 
     [ContextMenu("Limpiar Mapa")]
@@ -397,8 +417,11 @@ public class ProceduralMapGenerator : MonoBehaviour
         if (grassTilemap == null || wallTilemap == null) return;
 
 #if UNITY_EDITOR
-        Undo.RegisterCompleteObjectUndo(grassTilemap, "Limpiar Mapa");
-        Undo.RegisterCompleteObjectUndo(wallTilemap, "Limpiar Mapa");
+        if (!Application.isPlaying)
+        {
+            Undo.RegisterCompleteObjectUndo(grassTilemap, "Limpiar Mapa");
+            Undo.RegisterCompleteObjectUndo(wallTilemap, "Limpiar Mapa");
+        }
 #endif
 
         grassTilemap.ClearAllTiles();
@@ -406,8 +429,11 @@ public class ProceduralMapGenerator : MonoBehaviour
         ClearDecorations();
 
 #if UNITY_EDITOR
-        EditorUtility.SetDirty(grassTilemap.gameObject);
-        EditorUtility.SetDirty(wallTilemap.gameObject);
+        if (!Application.isPlaying)
+        {
+            EditorUtility.SetDirty(grassTilemap.gameObject);
+            EditorUtility.SetDirty(wallTilemap.gameObject);
+        }
 #endif
 
         Debug.Log("¡Mapa limpiado!");
@@ -418,12 +444,14 @@ public class ProceduralMapGenerator : MonoBehaviour
         Transform container = transform.Find("DecorationsContainer");
         if (container != null)
         {
-            DestroyImmediate(container.gameObject);
+            if (Application.isPlaying) Destroy(container.gameObject);
+            else DestroyImmediate(container.gameObject);
         }
         Transform enemiesContainer = transform.Find("EnemiesContainer");
         if (enemiesContainer != null)
         {
-            DestroyImmediate(enemiesContainer.gameObject);
+            if (Application.isPlaying) Destroy(enemiesContainer.gameObject);
+            else DestroyImmediate(enemiesContainer.gameObject);
         }
     }
 
@@ -431,12 +459,15 @@ public class ProceduralMapGenerator : MonoBehaviour
     {
         if (prefab == null) return;
 #if UNITY_EDITOR
-        GameObject obj = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-        obj.transform.position = position;
-        Undo.RegisterCreatedObjectUndo(obj, "Generar Mapa - Decoración");
-#else
-        Instantiate(prefab, position, Quaternion.identity, parent);
+        if (!Application.isPlaying)
+        {
+            GameObject obj = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+            obj.transform.position = position;
+            Undo.RegisterCreatedObjectUndo(obj, "Generar Mapa - Decoración");
+            return;
+        }
 #endif
+        Instantiate(prefab, position, Quaternion.identity, parent);
     }
 
     private void PruneDeadEnds(bool[,] isGrass)

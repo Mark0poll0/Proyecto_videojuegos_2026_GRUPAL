@@ -33,6 +33,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private void Awake()
     {
         currentHealth = maxHealth;
+
+        // Auto-detectar AudioSource si no está asignado en el Inspector
+        if (sfxSource == null)
+        {
+            sfxSource = GetComponent<AudioSource>();
+        }
     }
 
     private void Start()
