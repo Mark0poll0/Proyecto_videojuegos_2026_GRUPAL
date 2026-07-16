@@ -17,6 +17,15 @@ public class ProceduralMapGenerator : MonoBehaviour
         public TileBase parteInferior;
     }
 
+    [System.Serializable]
+    public struct EnemigoPonderado
+    {
+        [Tooltip("Prefab del enemigo (Green/Blue/Red...).")]
+        public GameObject prefab;
+        [Tooltip("Peso relativo de aparición (rareza). Más alto = más común.")]
+        [Range(0f, 1f)] public float peso;
+    }
+
     [Header("Tilemaps Destino")]
     [SerializeField] private Tilemap grassTilemap;
     [SerializeField] private Tilemap wallTilemap;
@@ -86,6 +95,8 @@ public class ProceduralMapGenerator : MonoBehaviour
     [SerializeField] private GameObject[] prefabsPropsManual;
     [Tooltip("Si se deja vacío, se cargarán todos los prefabs de Assets/PROYECTO/PREFABS/Enemy")]
     [SerializeField] private GameObject prefabEnemigoManual;
+    [Tooltip("Enemigos con peso de aparición (rareza). Si tiene entradas, tiene prioridad sobre prefabEnemigoManual y la carpeta Enemy. Ej: Green 0.40, Blue 0.35, Red 0.25.")]
+    [SerializeField] private EnemigoPonderado[] enemigosPonderados;
 
     /// <summary>
     /// Genera 5 zonas distribuidas en forma de cruz/quincuncio (Centro y 4 esquinas),
@@ -154,14 +165,20 @@ public class ProceduralMapGenerator : MonoBehaviour
             prefabsProps = LoadPrefabsFromPath("Props", new string[] { "Stairs", "Struct", "Gate" });
         }
 
+        bool usarPonderado = enemigosPonderados != null && enemigosPonderados.Length > 0;
         GameObject[] prefabsEnemigos;
-        if (prefabEnemigoManual != null)
+        if (usarPonderado)
+        {
+            prefabsEnemigos = new GameObject[0]; // no se usa en modo ponderado
+        }
+        else if (prefabEnemigoManual != null)
         {
             prefabsEnemigos = new GameObject[] { prefabEnemigoManual };
         }
         else
         {
-            prefabsEnemigos = LoadPrefabsFromPath("Enemy");
+            // Excluimos la barra de vida ("canvas") para no spawnearla como si fuera un enemigo.
+            prefabsEnemigos = LoadPrefabsFromPath("Enemy", new string[] { "canvas", "Canvas" });
         }
 
         // 4. Crear contenedor de decoración en la escena
@@ -279,11 +296,17 @@ public class ProceduralMapGenerator : MonoBehaviour
                         // Evitamos spawnear enemigos muy cerca del centro donde empieza el jugador
                         float distAlCentro = Vector2.Distance(new Vector2(x, y), new Vector2(anchoLienzo / 2, altoLienzo / 2));
 
-                        if (distAlCentro > 6f && prefabsEnemigos != null && prefabsEnemigos.Length > 0 && Random.value < densidadEnemigos)
+                        bool hayEnemigos = usarPonderado || (prefabsEnemigos != null && prefabsEnemigos.Length > 0);
+                        if (distAlCentro > 6f && hayEnemigos && Random.value < densidadEnemigos)
                         {
-                            GameObject enemigoElegido = prefabsEnemigos[Random.Range(0, prefabsEnemigos.Length)];
-                            Vector3 pos = grassTilemap.GetCellCenterWorld(new Vector3Int(worldX, worldY, 0));
-                            SpawnPrefab(enemigoElegido, pos, enemiesContainer);
+                            GameObject enemigoElegido = usarPonderado
+                                ? ElegirEnemigoPonderado()
+                                : prefabsEnemigos[Random.Range(0, prefabsEnemigos.Length)];
+                            if (enemigoElegido != null)
+                            {
+                                Vector3 pos = grassTilemap.GetCellCenterWorld(new Vector3Int(worldX, worldY, 0));
+                                SpawnPrefab(enemigoElegido, pos, enemiesContainer);
+                            }
                         }
                         else if (prefabsPlantas.Length > 0 && Random.value < densidadPlantas)
                         {
@@ -456,6 +479,25 @@ public class ProceduralMapGenerator : MonoBehaviour
     {
         if (array == null || array.Length == 0) return null;
         return array[Mathf.Clamp(index, 0, array.Length - 1)];
+    }
+
+    // Elige un enemigo al azar según sus pesos (ruleta ponderada por rareza).
+    private GameObject ElegirEnemigoPonderado()
+    {
+        float total = 0f;
+        foreach (var e in enemigosPonderados)
+            if (e.prefab != null) total += Mathf.Max(0f, e.peso);
+
+        if (total <= 0f) return null;
+
+        float r = Random.value * total;
+        foreach (var e in enemigosPonderados)
+        {
+            if (e.prefab == null) continue;
+            r -= Mathf.Max(0f, e.peso);
+            if (r <= 0f) return e.prefab;
+        }
+        return null;
     }
 
     private void GenerateZone(int centerX, int centerY, bool[,] isGrass)
