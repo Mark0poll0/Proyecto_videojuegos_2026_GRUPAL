@@ -25,6 +25,13 @@ public class PlayerAttackHitbox : MonoBehaviour
         alreadyHit.Clear();
     }
 
+    /// <summary>Aumenta el daño de cada golpe del combo (buff de daño).</summary>
+    public void AddDamage(int amount)
+    {
+        if (amount == 0) return;
+        damage = Mathf.Max(0, damage + amount);
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         TryHit(other);

@@ -71,6 +71,9 @@ public class Player_Controller : MonoBehaviour
     private bool isDead;
     private Coroutine comboCoroutine;
 
+    // Multiplicador de velocidad de ataque (1 = normal). Lo modifica el buff de cadencia.
+    private float attackSpeedMultiplier = 1f;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -206,7 +209,7 @@ public class Player_Controller : MonoBehaviour
             AnimationClip clip = GetAnimationClip(state);
             float duration = clip != null ? clip.length : 0.3f;
 
-            animator.speed = 1f;
+            animator.speed = attackSpeedMultiplier;
             animator.Play(state, 0, 0f);
             yield return null; // Dejamos pasar un frame para iniciar la transición
 
@@ -231,8 +234,9 @@ public class Player_Controller : MonoBehaviour
 
             // Avanzamos hasta el final de la animación usando el tiempo del clip
             float elapsed = 0f;
-            // Restamos un frame estimado del total para compensar el yield return null inicial
-            float waitDuration = Mathf.Max(0.05f, duration - Time.deltaTime);
+            // Restamos un frame estimado del total para compensar el yield return null inicial.
+            // Dividimos por el multiplicador porque a mayor cadencia la animación dura menos.
+            float waitDuration = Mathf.Max(0.05f, (duration / Mathf.Max(0.01f, attackSpeedMultiplier)) - Time.deltaTime);
             while (elapsed < waitDuration)
             {
                 elapsed += Time.deltaTime;
@@ -335,6 +339,22 @@ public class Player_Controller : MonoBehaviour
                 return clip;
         }
         return null;
+    }
+
+    /// <summary>Aumenta la velocidad de movimiento del jugador (buff de velocidad).</summary>
+    public void AddMoveSpeed(float amount)
+    {
+        moveSpeed = Mathf.Max(0f, moveSpeed + amount);
+    }
+
+    /// <summary>
+    /// Multiplica la velocidad de ataque del jugador (buff de cadencia).
+    /// Ej: factor 1.2 → los combos van un 20% más rápidos. Se acumula multiplicativamente.
+    /// </summary>
+    public void MultiplyAttackSpeed(float factor)
+    {
+        if (factor <= 0f) return;
+        attackSpeedMultiplier *= factor;
     }
 
     /// <summary>

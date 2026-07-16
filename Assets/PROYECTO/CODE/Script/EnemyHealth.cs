@@ -7,6 +7,17 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [Tooltip("Vida máxima del enemigo. Ajustar por dificultad (Green/Blue/Red).")]
     [SerializeField] private int maxHealth = 6;
 
+    [Header("Puntuación")]
+    [Tooltip("Puntos que otorga este enemigo al morir. Ajustar por dificultad (Green/Blue/Red).")]
+    [SerializeField] private int scoreValue = 10;
+
+    /// <summary>
+    /// Evento estático que se dispara al morir CUALQUIER enemigo, con los puntos que otorga.
+    /// El ScoreManager se suscribe aquí (funciona con los enemigos que instancia el generador
+    /// procedural, sin necesidad de cablear referencias a mano).
+    /// </summary>
+    public static event Action<int> OnEnemyKilled;
+
     [Header("Sonidos (SFX)")]
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip[] hurtSounds;
@@ -51,6 +62,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         isDead = true;
         PlayRandomSound(deathSounds);
         OnDeath?.Invoke();
+        OnEnemyKilled?.Invoke(scoreValue);
     }
 
     private void PlayRandomSound(AudioClip[] clips)

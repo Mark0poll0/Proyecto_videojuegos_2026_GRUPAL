@@ -395,6 +395,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 4
+  scoreValue: 10
   sfxSource: {fileID: 0}
   hurtSounds: []
   deathSounds: []

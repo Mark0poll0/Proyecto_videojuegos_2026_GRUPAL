@@ -61,6 +61,19 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
+    /// <summary>
+    /// Aumenta la vida MÁXIMA del jugador (buff de vida) y cura esa misma cantidad.
+    /// Recuerda: 4 puntos = 1 corazón. El HeartUIManager añade corazones automáticamente.
+    /// </summary>
+    public void IncreaseMaxHealth(int extraPoints)
+    {
+        if (extraPoints <= 0) return;
+
+        maxHealth += extraPoints;
+        currentHealth = Mathf.Min(maxHealth, currentHealth + extraPoints);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
     // Métodos de prueba rápida desde el Inspector de Unity
     [ContextMenu("Hacer Daño de Prueba (1 punto)")]
     private void TestDamage()
