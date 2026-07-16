@@ -11,7 +11,11 @@ public enum BuffType
     Damage,
     MaxHealth,
     FullHeal,
-    AttackSpeed
+    AttackSpeed,
+    CritChance,
+    LifeSteal,
+    Thorns,
+    Turbo
 }
 
 /// <summary>

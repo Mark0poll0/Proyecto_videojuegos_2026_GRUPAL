@@ -14,10 +14,14 @@ public class PlayerAttackHitbox : MonoBehaviour
     private System.Collections.Generic.List<Collider2D> alreadyHit = new System.Collections.Generic.List<Collider2D>();
 
     private Collider2D col;
+    private PlayerBuffs playerBuffs;   // stats de crítico/robo de vida
+    private PlayerHealth playerHealth; // para curar por robo de vida
 
     private void Awake()
     {
         col = GetComponent<Collider2D>();
+        playerBuffs = GetComponentInParent<PlayerBuffs>();
+        playerHealth = GetComponentInParent<PlayerHealth>();
     }
 
     public void ClearHits()
@@ -51,13 +55,32 @@ public class PlayerAttackHitbox : MonoBehaviour
         if (damageable != null)
         {
             alreadyHit.Add(other);
-            Debug.Log($"[Hitbox] Golpeando a: {other.gameObject.name}. Daño: {damage}");
-            damageable.TakeDamage(damage);
 
-            // Feedback de impacto: número de daño flotante + micro-congelación (hit-stop).
+            // Crítico: probabilidad de multiplicar el daño.
+            int finalDamage = damage;
+            bool isCrit = false;
+            if (playerBuffs != null && playerBuffs.CritChance > 0f && Random.value < playerBuffs.CritChance)
+            {
+                finalDamage = Mathf.RoundToInt(damage * playerBuffs.CritMultiplier);
+                isCrit = true;
+            }
+
+            damageable.TakeDamage(finalDamage);
+
+            // Robo de vida: curar una fracción del daño infligido.
+            if (playerBuffs != null && playerBuffs.LifeStealFraction > 0f && playerHealth != null)
+            {
+                int heal = Mathf.CeilToInt(finalDamage * playerBuffs.LifeStealFraction);
+                if (heal > 0) playerHealth.Heal(heal);
+            }
+
+            // Feedback de impacto: número de daño flotante (crítico resaltado) + hit-stop.
             if (JuiceManager.Instance != null)
             {
-                JuiceManager.Instance.ShowFloatingText(other.transform.position, damage.ToString(), Color.white);
+                if (isCrit)
+                    JuiceManager.Instance.ShowFloatingText(other.transform.position, finalDamage + "!", new Color(1f, 0.55f, 0.1f), 12f);
+                else
+                    JuiceManager.Instance.ShowFloatingText(other.transform.position, finalDamage.ToString(), Color.white);
                 JuiceManager.Instance.HitStop(0.04f);
             }
 

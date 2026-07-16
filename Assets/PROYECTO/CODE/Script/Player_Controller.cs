@@ -74,10 +74,24 @@ public class Player_Controller : MonoBehaviour
     // Multiplicador de velocidad de ataque (1 = normal). Lo modifica el buff de cadencia.
     private float attackSpeedMultiplier = 1f;
 
+    // Turbo (habilidad activa - tecla Shift)
+    private PlayerBuffs playerBuffs;
+    private bool turboActive;
+    private float turboTimer;
+    private float cooldownTimer;
+
+    // Estado del Turbo para el HUD
+    public bool TurboUnlocked => playerBuffs != null && playerBuffs.TurboUnlocked;
+    public bool TurboActive => turboActive;
+    public bool TurboReady => TurboUnlocked && !turboActive && cooldownTimer <= 0f;
+    public float TurboRemaining01 => (playerBuffs != null && playerBuffs.TurboDuration > 0f) ? Mathf.Clamp01(turboTimer / playerBuffs.TurboDuration) : 0f;
+    public float CooldownProgress01 => (playerBuffs != null && playerBuffs.TurboCooldown > 0f) ? Mathf.Clamp01(1f - cooldownTimer / playerBuffs.TurboCooldown) : 1f;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        playerBuffs = GetComponent<PlayerBuffs>();
 
         // Inicializamos los controles del Input System
         controls = new PlayerController();
@@ -114,6 +128,9 @@ public class Player_Controller : MonoBehaviour
         if (isDead || Time.timeScale == 0f)
             return;
 
+        // El Turbo se gestiona incluso mientras atacas (timers + tecla Shift).
+        HandleTurbo();
+
         // Mientras ataca, el ataque tiene prioridad: no leemos movimiento
         if (isAttacking)
             return;
@@ -149,8 +166,39 @@ public class Player_Controller : MonoBehaviour
             return;
         }
 
-        // Movemos con Física en FixedUpdate (ritmo fijo del motor de física)
-        rb.linearVelocity = moveInput * moveSpeed;
+        // Movemos con Física en FixedUpdate (ritmo fijo del motor de física).
+        // Durante el Turbo, la velocidad se multiplica.
+        float speedMult = (turboActive && playerBuffs != null) ? playerBuffs.TurboSpeedMult : 1f;
+        rb.linearVelocity = moveInput * moveSpeed * speedMult;
+    }
+
+    // Gestiona los temporizadores del Turbo y su activación con la tecla Shift.
+    private void HandleTurbo()
+    {
+        if (playerBuffs == null) return;
+
+        if (turboActive)
+        {
+            turboTimer -= Time.deltaTime;
+            if (turboTimer <= 0f)
+            {
+                turboActive = false;
+                cooldownTimer = playerBuffs.TurboCooldown;
+            }
+        }
+        else if (cooldownTimer > 0f)
+        {
+            cooldownTimer -= Time.deltaTime;
+        }
+
+        if (playerBuffs.TurboUnlocked && !turboActive && cooldownTimer <= 0f
+            && Keyboard.current != null && Keyboard.current.leftShiftKey.wasPressedThisFrame)
+        {
+            turboActive = true;
+            turboTimer = playerBuffs.TurboDuration;
+            if (JuiceManager.Instance != null)
+                JuiceManager.Instance.ShowFloatingText(transform.position, "TURBO!", new Color(0.3f, 0.9f, 1f), 8f);
+        }
     }
 
     // Se dispara cuando se presiona la acción Attack (tecla Z)
@@ -209,7 +257,8 @@ public class Player_Controller : MonoBehaviour
             AnimationClip clip = GetAnimationClip(state);
             float duration = clip != null ? clip.length : 0.3f;
 
-            animator.speed = attackSpeedMultiplier;
+            float atkMult = attackSpeedMultiplier * (turboActive && playerBuffs != null ? playerBuffs.TurboAtkSpeedMult : 1f);
+            animator.speed = atkMult;
             animator.Play(state, 0, 0f);
             yield return null; // Dejamos pasar un frame para iniciar la transición
 
@@ -236,7 +285,7 @@ public class Player_Controller : MonoBehaviour
             float elapsed = 0f;
             // Restamos un frame estimado del total para compensar el yield return null inicial.
             // Dividimos por el multiplicador porque a mayor cadencia la animación dura menos.
-            float waitDuration = Mathf.Max(0.05f, (duration / Mathf.Max(0.01f, attackSpeedMultiplier)) - Time.deltaTime);
+            float waitDuration = Mathf.Max(0.05f, (duration / Mathf.Max(0.01f, atkMult)) - Time.deltaTime);
             while (elapsed < waitDuration)
             {
                 elapsed += Time.deltaTime;

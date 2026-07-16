@@ -33,6 +33,7 @@ public class EnemyController : MonoBehaviour
     private EnemyHealth enemyHealth;
     private Transform playerTransform;
     private PlayerHealth playerHealth;
+    private PlayerBuffs playerBuffs; // para leer el daño de espinas del jugador
 
     // Flash blanco al recibir daño (se restaura al color/tinte original del prefab).
     private Color originalColor = Color.white;
@@ -95,6 +96,7 @@ public class EnemyController : MonoBehaviour
         {
             playerTransform = player.transform;
             playerHealth = player.GetComponent<PlayerHealth>();
+            playerBuffs = player.GetComponent<PlayerBuffs>();
         }
         else
         {
@@ -236,6 +238,12 @@ public class EnemyController : MonoBehaviour
         if (distance <= attackRange)
         {
             playerHealth.TakeDamage(attackDamage);
+
+            // Espinas: reflejar daño al enemigo al golpear al jugador.
+            if (!isDead && playerBuffs != null && playerBuffs.ThornsDamage > 0 && enemyHealth != null)
+            {
+                enemyHealth.TakeDamage(playerBuffs.ThornsDamage);
+            }
         }
 
         if (!isDead)
