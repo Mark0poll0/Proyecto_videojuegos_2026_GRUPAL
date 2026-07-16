@@ -10,6 +10,10 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private int currentHealth;
     private int maxHealth;
 
+    // Lectura para el pergamino de personaje.
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+
     private Player_Controller playerController;
 
     // Evento al que se suscribirá la UI para actualizarse automáticamente

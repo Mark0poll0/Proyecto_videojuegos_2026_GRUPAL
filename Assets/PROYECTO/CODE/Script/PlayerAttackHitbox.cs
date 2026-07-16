@@ -5,6 +5,9 @@ public class PlayerAttackHitbox : MonoBehaviour
     [Tooltip("Daño aplicado por cada golpe del combo que conecte.")]
     [SerializeField] private int damage = 1;
 
+    /// <summary>Daño actual por golpe (para el pergamino de personaje).</summary>
+    public int Damage => damage;
+
     [Header("Empuje (Knockback)")]
     [Tooltip("Fuerza del empuje al golpear al enemigo. Puedes cambiarlo para ver qué tan lejos lo empuja.")]
     public float knockbackForce = 10f;

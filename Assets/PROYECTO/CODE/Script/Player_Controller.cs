@@ -80,6 +80,10 @@ public class Player_Controller : MonoBehaviour
     private float turboTimer;
     private float cooldownTimer;
 
+    // Stats para el pergamino de personaje
+    public float MoveSpeed => moveSpeed;
+    public float AttackSpeedMultiplier => attackSpeedMultiplier;
+
     // Estado del Turbo para el HUD
     public bool TurboUnlocked => playerBuffs != null && playerBuffs.TurboUnlocked;
     public bool TurboActive => turboActive;

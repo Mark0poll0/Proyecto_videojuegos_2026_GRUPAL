@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// Punto central para aplicar y ALMACENAR las mejoras (buffs) del jugador.
@@ -46,6 +47,10 @@ public class PlayerBuffs : MonoBehaviour
     public float TurboSpeedMult => turboSpeedMult;
     public float TurboAtkSpeedMult => turboAtkSpeedMult;
 
+    // Conteo de cuántas veces se ha elegido cada buff (para el pergamino).
+    private readonly Dictionary<BuffType, int> pickCounts = new Dictionary<BuffType, int>();
+    public IReadOnlyDictionary<BuffType, int> GetPickCounts() => pickCounts;
+
     private Player_Controller playerController;
     private PlayerHealth playerHealth;
     private PlayerAttackHitbox attackHitbox;
@@ -60,6 +65,10 @@ public class PlayerBuffs : MonoBehaviour
     /// <summary>Aplica un buff según su tipo y magnitud (llamado desde BuffSelectionManager).</summary>
     public void ApplyBuff(BuffType type, float magnitude)
     {
+        // Contar el pick (para mostrarlo en el pergamino de personaje).
+        pickCounts.TryGetValue(type, out int prev);
+        pickCounts[type] = prev + 1;
+
         switch (type)
         {
             case BuffType.Speed:
