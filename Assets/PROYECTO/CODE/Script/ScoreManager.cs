@@ -15,8 +15,14 @@ public class ScoreManager : MonoBehaviour
     /// <summary>Puntuación actual del jugador en esta partida.</summary>
     public int CurrentScore { get; private set; }
 
+    /// <summary>Enemigos eliminados en esta partida.</summary>
+    public int Kills { get; private set; }
+
     /// <summary>Se dispara cada vez que cambia la puntuación. Parámetro: nueva puntuación total.</summary>
     public event Action<int> OnScoreChanged;
+
+    /// <summary>Se dispara cada vez que cambia el contador de kills. Parámetro: total de kills.</summary>
+    public event Action<int> OnKillsChanged;
 
     private void Awake()
     {
@@ -53,6 +59,8 @@ public class ScoreManager : MonoBehaviour
     private void HandleEnemyKilled(int scoreValue)
     {
         AddScore(scoreValue);
+        Kills++;
+        OnKillsChanged?.Invoke(Kills);
     }
 
     /// <summary>Suma puntos a la puntuación (al matar enemigos, recoger objetos, etc.).</summary>

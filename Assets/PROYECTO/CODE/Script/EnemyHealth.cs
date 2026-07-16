@@ -63,6 +63,15 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         PlayRandomSound(deathSounds);
         OnDeath?.Invoke();
         OnEnemyKilled?.Invoke(scoreValue);
+
+        // Feedback de muerte: "+score" flotante dorado + screen shake (más fuerte con enemigos duros).
+        if (JuiceManager.Instance != null)
+        {
+            Color dorado = new Color(1f, 0.85f, 0.2f);
+            JuiceManager.Instance.ShowFloatingText(transform.position, "+" + scoreValue, dorado, 10f);
+            float mag = Mathf.Lerp(0.06f, 0.13f, Mathf.InverseLerp(10f, 70f, scoreValue));
+            JuiceManager.Instance.Shake(0.12f, mag);
+        }
     }
 
     private void PlayRandomSound(AudioClip[] clips)

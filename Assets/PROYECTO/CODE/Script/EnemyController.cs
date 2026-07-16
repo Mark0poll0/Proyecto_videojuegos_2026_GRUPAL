@@ -34,6 +34,10 @@ public class EnemyController : MonoBehaviour
     private Transform playerTransform;
     private PlayerHealth playerHealth;
 
+    // Flash blanco al recibir daño (se restaura al color/tinte original del prefab).
+    private Color originalColor = Color.white;
+    private Coroutine flashRoutine;
+
     private EnemyState state = EnemyState.Idle;
     private float lastAttackTime = -999f;
     private bool isDead;
@@ -51,6 +55,7 @@ public class EnemyController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null) originalColor = spriteRenderer.color;
         enemyHealth = GetComponent<EnemyHealth>();
 
         if (animator != null && animator.runtimeAnimatorController != null)
@@ -260,11 +265,32 @@ public class EnemyController : MonoBehaviour
 
     private void HandleHealthChanged(int current, int max)
     {
-        // Se descarta el aviso inicial (current == max) y la muerte (current == 0, ver HandleDeath).
-        if (current > 0 && current < max)
+        // Cualquier daño (letal o no) dispara el flash blanco; el aviso inicial (current == max) se ignora.
+        if (current < max)
         {
-            animator.Play("Hurt", 0, 0f);
+            FlashWhite();
+
+            // El "Hurt" solo para golpes NO letales (la muerte tiene su propia animación).
+            if (current > 0)
+            {
+                animator.Play("Hurt", 0, 0f);
+            }
         }
+    }
+
+    private void FlashWhite()
+    {
+        if (spriteRenderer == null) return;
+        if (flashRoutine != null) StopCoroutine(flashRoutine);
+        flashRoutine = StartCoroutine(FlashRoutine());
+    }
+
+    private IEnumerator FlashRoutine()
+    {
+        spriteRenderer.color = Color.white;
+        yield return new WaitForSecondsRealtime(0.06f);
+        if (spriteRenderer != null) spriteRenderer.color = originalColor;
+        flashRoutine = null;
     }
 
     private void HandleDeath()

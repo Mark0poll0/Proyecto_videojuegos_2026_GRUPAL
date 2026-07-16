@@ -54,6 +54,13 @@ public class PlayerAttackHitbox : MonoBehaviour
             Debug.Log($"[Hitbox] Golpeando a: {other.gameObject.name}. Daño: {damage}");
             damageable.TakeDamage(damage);
 
+            // Feedback de impacto: número de daño flotante + micro-congelación (hit-stop).
+            if (JuiceManager.Instance != null)
+            {
+                JuiceManager.Instance.ShowFloatingText(other.transform.position, damage.ToString(), Color.white);
+                JuiceManager.Instance.HitStop(0.04f);
+            }
+
             EnemyController enemy = other.GetComponentInParent<EnemyController>();
             if (enemy != null)
             {
